@@ -8,8 +8,8 @@ def clean2d(smiles):
     drawer.process_structure()
   
     drawn_atoms = drawer.structure.get_drawn_atoms()
-    coordinates = [(atom.draw.position.x, atom.draw.position.y) for atom in drawn_atoms]
-    return coordinates
+    xy = [[atom.draw.position.x, atom.draw.position.y] for atom in drawn_atoms]
+    return xy
     
 smiles = 'CC=CC'
-clean2d(smiles)
+print(*clean2d(smiles), sep='\n')

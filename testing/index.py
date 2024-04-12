@@ -3,26 +3,12 @@ from pikachu.smiles.smiles import read_smiles
 
 def clean2d(smiles):
     drawer = Drawer(
-       structure=read_smiles(smiles_string=smiles)
+       structure=read_smiles(smiles)
     )
     drawer.process_structure()
   
-    vertices = drawer.structure.graph
-    print(vertices)
-    # drawer = DrawerBase({})
-    # parsed = Parser.parse(smiles)
-    # drawer.initDraw(parsed, 'light', False)
-    # drawer.processGraph()
-
-    vertices = drawer.graph.vertices
-    xy = list()
-    for i in range(len(vertices)):
-      position = vertices[i].position
-      xy.append([position.x, position.y])
-# OR
-    # xy = [[point.position.x, point.position.y] for point in vertices]
-
-
+    drawn_atoms = drawer.structure.get_drawn_atoms()
+    xy = [[atom.draw.position.x, atom.draw.position.y] for atom in drawn_atoms]
     return xy
 
 __all__ = ['clean2d']
