@@ -8,7 +8,7 @@ def clean2d(smiles):
     drawer.process_structure()
   
     vertices = drawer.structure.graph
-    
+    print(vertices)
     # drawer = DrawerBase({})
     # parsed = Parser.parse(smiles)
     # drawer.initDraw(parsed, 'light', False)

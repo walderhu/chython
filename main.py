@@ -1,25 +1,15 @@
-# from chython import smiles
-
-# m = smiles('CC=CC')
-# m.clean2d()
-# m
-
-
-
-# import pikachu
-# import pikachu.general
-# import pikachu.parsers
-# import pikachu.parsers.coconut
-
-# # pikachu.general.draw_smiles('CC=O')
-# pikachu.parsers.
-
-
-import pikachu 
+from pikachu.drawing.drawing import Drawer
+from pikachu.smiles.smiles import read_smiles
 
 def clean2d(smiles):
-    m = pikachu.Molecule
-    mol = pk.Molecule.from_smiles(smiles)
-    mol.clean2d()
-    xy = [[atom.x, atom.y] for atom in mol.atoms]
-    return xy
+    drawer = Drawer(
+       structure=read_smiles(smiles)
+    )
+    drawer.process_structure()
+  
+    drawn_atoms = drawer.structure.get_drawn_atoms()
+    coordinates = [(atom.draw.position.x, atom.draw.position.y) for atom in drawn_atoms]
+    return coordinates
+    
+smiles = 'CC=CC'
+clean2d(smiles)

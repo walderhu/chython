@@ -24,7 +24,6 @@ class Calculate2DMolecule:
             if (xy := index.clean2d(smiles)) is not None:
                 break
 
-
         shift_x, shift_y = xy[0]
         for n, (x, y) in zip(order, xy):
             plane[n] = (x - shift_x, shift_y - y)
