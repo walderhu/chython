@@ -25,6 +25,7 @@ from .reactor import *
 from .utils import *
 
 
+
 pickle_cache = False  # store cached attributes in pickle
 torch_device = 'cpu'  # AAM model device. Change before first `reset_mapping` call!
 
