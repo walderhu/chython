@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-import index
-from random import random
-from typing import TYPE_CHECKING, Union
-from ...exceptions import ImplementationError
-=======
 from .index import clean2d as cl2d
 from random import random
 from typing import TYPE_CHECKING, Union
-# from ...exceptions import ImplementationError
->>>>>>> pink2
 
 try:
     from importlib.resources import files
@@ -28,11 +20,8 @@ class Calculate2DMolecule:
         entry = iter(sorted(self, key=lambda n: len(self._bonds[n])))
         for _ in range(min(5, len(self))):
             smiles, order = self.__clean2d_prepare(next(entry))
-<<<<<<< HEAD
-            if (xy := index.clean2d(smiles)) is not None:
-=======
-            if (xy := cl2d(smiles)) is not None:
->>>>>>> pink2
+            xy = cl2d(smiles)
+            if xy is not None:
                 break
 
         shift_x, shift_y = xy[0]
@@ -176,8 +165,4 @@ class Calculate2DReaction:
         self.flush_cache()
 
 
-<<<<<<< HEAD
 __all__ = ['Calculate2DMolecule', 'Calculate2DReaction']
-=======
-__all__ = ['Calculate2DMolecule', 'Calculate2DReaction']
->>>>>>> pink2
