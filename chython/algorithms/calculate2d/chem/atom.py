@@ -748,6 +748,42 @@ class Atom:
             hybridisation = ATOM_PROPERTIES.steric_nr_to_hybridisation[steric_number]
 
         return hybridisation
+    
+        # TODO: Check when this function is called
+    def _promote_pi_bond_to_d_orbital(self) -> None:
+        """
+        Promote pi-bonds from sp[x]d[y] orbitals to d-orbitals
+        """
+        assert self._is_promotable()
+
+        donor_orbitals = []
+        receiver_orbitals = []
+        for orbital in self.valence_shell.orbitals:
+            if orbital.orbital_type == 'p' and orbital.electron_nr == 2:
+                if orbital.electrons[0].atom != orbital.electrons[1].atom:
+                    donor_orbitals.append(orbital)
+
+            elif orbital.orbital_type == 'd' and orbital.electron_nr == 1:
+                receiver_orbitals.append(orbital)
+
+        donor_orbital = donor_orbitals[0]
+        receiver_orbital = receiver_orbitals[0]
+
+        moved_electron = None
+
+        for electron in donor_orbital.electrons:
+            if electron.atom != self:
+                moved_electron = electron
+
+        donor_orbital.remove_electron(moved_electron)
+        receiver_orbital.add_electron(moved_electron)
+
+        receiver_orbital.set_bond(donor_orbital.bond, 'pi')
+        donor_orbital._remove_bond()
+
+        self.valence_shell.dehybridise()
+
+        self.hybridise()
 
 
 class AtomDrawProperties:
