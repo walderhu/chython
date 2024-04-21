@@ -719,7 +719,7 @@ class Drawer:
         return True
     
     def resolve_primary_overlaps(self) -> None:
-        overlaps: list[dict[str, Union[Atom, list[int], list[Atom]]]] = []
+        overlaps: List[dict[str, Union[Atom, List[int], List[Atom]]]] = []
         resolved_atoms: dict[Atom, bool] = {}
         for atom in self.structure.graph:
             if atom.draw.is_drawn:
@@ -834,7 +834,7 @@ class Drawer:
     
     @staticmethod
     def get_non_ring_neighbours(atom: Atom) -> List[Atom]:
-        non_ring_neighbours: list[Atom] = []
+        non_ring_neighbours: List[Atom] = []
         for neighbour in atom.drawn_neighbours:
             nr_overlapping_rings = len(set(atom.draw.rings).intersection(set(neighbour.draw.rings)))
             if nr_overlapping_rings == 0 and not neighbour.draw.is_bridge:
@@ -886,7 +886,7 @@ class Drawer:
             return
         if center is None:
             center = Vector(0, 0)
-        ordered_neighbour_ids: list[int] = ring.get_ordered_neighbours(self.ring_overlaps)
+        ordered_neighbour_ids: List[int] = ring.get_ordered_neighbours(self.ring_overlaps)
         starting_angle: float = 0
         if start_atom:
             starting_angle = Vector.subtract_vectors(start_atom.draw.position, center).angle()
@@ -1017,7 +1017,7 @@ class Drawer:
             if ring_id == -1:
                 break
             ring: Ring = self.id_to_ring[ring_id]
-            involved_ring_ids: Union[list[int], set[int]] = []
+            involved_ring_ids: Union[List[int], set[int]] = []
             self.get_bridged_ring_subrings(ring.id, involved_ring_ids)
             involved_ring_ids = set(involved_ring_ids)
             self.has_bridged_ring = True
@@ -1036,8 +1036,8 @@ class Drawer:
                     self.remove_ring(involved_ring)
     
     def hide_hydrogens(self) -> None:
-        hidden: list[Atom] = []
-        exposed: list[Atom] = []
+        hidden: List[Atom] = []
+        exposed: List[Atom] = []
         self.structure.refresh_structure()
         for atom in self.structure.graph:
             if atom.type != 'H':
@@ -1065,14 +1065,14 @@ class Drawer:
                 self.drawn_bonds.append(bond)
         self.drawn_atoms = self.structure.get_drawn_atoms()
     
-    def get_bridged_rings(self) -> list[Ring]:
-        bridged_rings: list[Ring] = []
+    def get_bridged_rings(self) -> List[Ring]:
+        bridged_rings: List[Ring] = []
         for ring in self.rings:
             if ring.bridged:
                 bridged_rings.append(ring)
         return bridged_rings
     
-    def get_bridged_ring_subrings(self, ring_id: int, involved_ring_ids: list[int]) -> None:
+    def get_bridged_ring_subrings(self, ring_id: int, involved_ring_ids: List[int]) -> None:
         involved_ring_ids.append(ring_id)
         ring = self.id_to_ring[ring_id]
         for neighbour_id in ring.neighbouring_rings:

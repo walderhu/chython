@@ -27,3 +27,6 @@ clean:
 clang:
 	@autopep8 --in-place --aggressive --aggressive $(FILE)
 	@autopep8 --in-place --aggressive --aggressive $(TEST_FILE)
+
+project:
+	pip install CachedMethods numpy lazy_object_proxy importlib_resources lxml
