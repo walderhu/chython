@@ -1,4 +1,4 @@
-from .index import clean2d as cl2d
+from .index import clean2d as index
 from random import random
 from typing import TYPE_CHECKING, Union
 
@@ -20,7 +20,7 @@ class Calculate2DMolecule:
         entry = iter(sorted(self, key=lambda n: len(self._bonds[n])))
         for _ in range(min(5, len(self))):
             smiles, order = self.__clean2d_prepare(next(entry))
-            xy = cl2d(smiles)
+            xy = index(smiles)
             if xy is not None:
                 break
 
