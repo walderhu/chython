@@ -30,26 +30,7 @@ class Atom:
         aromatic: bool, True if atom is part of an aromatic system, False if otherwise
         shells: dict of {shell_nr: Shell, ->}
     """
-    #
-    # def __new__(cls, atom_type: str, atom_nr: int, chiral: Optional[str], charge: int, aromatic: bool):
-    #     self = super().__new__(cls)  # Must explicitly create the new object
-    #     # Aside from explicit construction and return, rest of __new__
-    #     # is same as __init__
-    #     self.type = atom_type
-    #     self.nr = atom_nr
-    #     self.chiral = chiral
-    #     self.charge = charge
-    #     self.aromatic = aromatic
-    #     self.shells = {}
-    #
-    #     return self  # __new__ returns the new object
-    #
-    # def __getnewargs__(self):
-    #     # Return the arguments that *must* be passed to __new__
-    #     return self.type, self.nr, self.chiral, self.charge, self.aromatic
-
     def __init__(self, atom_type: str, atom_nr: int, chiral: Optional[str], charge: int, aromatic: bool) -> None:
-
         self.type: str = atom_type
         self.nr: int = atom_nr
         self.chiral: Optional[str] = chiral

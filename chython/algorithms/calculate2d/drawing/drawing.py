@@ -39,8 +39,9 @@ class Options:
         self.svg_font_size: int = 8
         self.svg_font_size_small: int = 6
         self.svg_letter_spacing: int = -2
-class Drawer:
 
+
+class Drawer:
     def __init__(self, structure: Structure, options: Union[Options, None] = None,
                  coords_only: bool = False, multiple: bool = False, kekulise: bool = True) -> None:
         """
@@ -113,7 +114,8 @@ class Drawer:
                 if dist < minimum:
                     current_atom = atom
                     minimum = dist
-            unvisited.remove(current_atom)
+            if current_atom is not None:#
+                unvisited.remove(current_atom)#
             if current_atom == atom_2:
                 break
             for neighbour in self.structure.graph[current_atom]:
@@ -294,16 +296,6 @@ class Drawer:
                 else:
                     self._fix_chiral_bond(bond)
   
-    # @staticmethod
-    # def set_r_group_indices_subscript(atom_text: str) -> str:
-    #     sub_translation = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
-    #     match = re.search('[RXZ]\d+', atom_text)
-    #     if match:
-    #         matched_pattern = match.group()
-    #         adapted_pattern = matched_pattern.translate(sub_translation)
-    #         atom_text = atom_text.replace(matched_pattern, adapted_pattern)
-    #     return atom_text
-    
     @staticmethod
     def _is_terminal(atom: Atom) -> bool:
         if len(atom.drawn_neighbours) <= 1:
@@ -966,7 +958,6 @@ class Drawer:
             total.add(atom.draw.position)
         total.divide(len(ring.members))
         ring.center = total
-    # TODO: Check if we can use this function instead of get_average_midpoint
     
     def get_current_centre_of_mass(self) -> Vector:
         total = Vector(0, 0)

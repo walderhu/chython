@@ -29,10 +29,6 @@ class Electron:
 
     def __hash__(self):
         return hash((self.id, self.atom.nr))
-        # if self.orbital_nr:
-        #     return hash(f'{self.atom}_{self.shell_nr}{self.orbital_type}{self.orbital_nr}_{self.spin}')
-        # else:
-        #     return hash(f'{self.atom}_{self.shell_nr}{self.orbital_type}_{self.spin}')
 
     def set_orbital(self, orbital):
         self.orbital_type = orbital.orbital_type
