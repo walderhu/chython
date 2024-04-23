@@ -99,6 +99,24 @@ class Calculate2DMolecule:
                 max_x += 0.25
         return max_x
 
+    # def __clean2d_prepare(self: 'MoleculeContainer', entry):
+    #     hydrogens = self._hydrogens
+    #     charges = self._charges
+    #     allenes_stereo = self._allenes_stereo
+    #     atoms_stereo = self._atoms_stereo
+    #     self._charges = self._hydrogens = {n: 0 for n in hydrogens}
+    #     self._atoms_stereo = self._allenes_stereo = {}
+    #     w = {n: random() for n in hydrogens}
+    #     w[entry] = -1
+    #     try:
+    #         smiles, order = self._smiles(w.__getitem__, random=True, _return_order=True)
+    #     finally:
+    #         self._hydrogens = hydrogens
+    #         self._charges = charges
+    #         self._allenes_stereo = allenes_stereo
+    #         self._atoms_stereo = atoms_stereo
+    #     return ''.join(smiles).replace('~', '-'), order
+    
     def __clean2d_prepare(self: 'MoleculeContainer', entry):
         hydrogens = self._hydrogens
         charges = self._charges
@@ -106,7 +124,8 @@ class Calculate2DMolecule:
         atoms_stereo = self._atoms_stereo
         self._charges = self._hydrogens = {n: 0 for n in hydrogens}
         self._atoms_stereo = self._allenes_stereo = {}
-        w = {n: random() for n in hydrogens}
+        # Используем последовательное присвоение весов атомам
+        w = {n: i for i, n in enumerate(hydrogens)}
         w[entry] = -1
         try:
             smiles, order = self._smiles(w.__getitem__, random=True, _return_order=True)

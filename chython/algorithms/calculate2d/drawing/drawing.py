@@ -97,9 +97,20 @@ class Drawer:
         self.annotation = annotation
     
     def find_shortest_path(self, atom_1: Atom, atom_2: Atom, path_type: str = 'bond') -> List[Union[Bond, Atom]]:
+        """
+        Return the shortest path between two atoms, either as a list of bonds or as a list of atoms
+        Parameters
+        ----------
+        atom_1: Atom instance, must be in structure
+        atom_2: Atom instance, must be in structure
+        path_type: str, 'bond' or 'atom'
+        Returns
+        list of atoms or bonds describing the shortest path between atom_1 and atom_2
+        """
         distances: Dict[Atom, float] = {}
         previous_hop: Dict[Atom, Optional[Atom]] = {}
         unvisited: Set[Atom] = set()
+
         for atom in self.structure.graph:
             distances[atom] = float('inf')
             previous_hop[atom] = None
@@ -114,19 +125,20 @@ class Drawer:
                 if dist < minimum:
                     current_atom = atom
                     minimum = dist
-            # if current_atom is not None:#
-                # unvisited.remove(current_atom)#
-            unvisited.discard(current_atom)
             if current_atom is None:
-                break
+                break            
             if current_atom == atom_2:
                 break
+            unvisited.remove(current_atom)
+            # If there exists a shorter path between the source atom and the neighbours, update distance
             for neighbour in self.structure.graph[current_atom]:
                 if neighbour in unvisited:
                     alternative_distance: float = distances[current_atom] + 1.0
+
                     if alternative_distance < distances[neighbour]:
                         distances[neighbour] = alternative_distance
                         previous_hop[neighbour] = current_atom
+        # Construct the path of atoms
         path_atoms: List[Atom] = []
         current_atom: Optional[Atom] = atom_2
         if previous_hop[current_atom] or current_atom == atom_1:
@@ -140,6 +152,7 @@ class Drawer:
                 atom_2 = path_atoms[i]
                 bond = self.structure.bond_lookup[atom_1][atom_2]
                 path.append(bond)
+
             return path
         elif path_type == 'atom':
             return path_atoms
@@ -151,7 +164,9 @@ class Drawer:
             clashing_atoms = self._find_clashing_atoms()
             best_bonds: List[Bond] = []
             for atom_1, atom_2 in clashing_atoms:
-                shortest_path = self.find_shortest_path(atom_1, atom_2)
+                # shortest_path = self.find_shortest_path(atom_1, atom_2)
+                if self.structure.is_connected(atom_1, atom_2):
+                    shortest_path = self.find_shortest_path(atom_1, atom_2)
                 rotatable_bonds: List[Bond] = []
                 distances: List[float] = []
                 for i, bond in enumerate(shortest_path):

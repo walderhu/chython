@@ -67,6 +67,11 @@ class Structure:
                 return True
             return False
         return False
+    
+    def is_connected(self, atom_1, atom_2):
+        if atom_1 in self.graph and atom_2 in self.graph:
+            return True
+        return False
 
     def get_subtree(self, atom, parent_atom):
         pass

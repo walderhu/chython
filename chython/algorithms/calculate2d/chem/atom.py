@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Optional, List, Tuple, Dict
 
-import copy
+# import copy
 
 from ..chem.lone_pair import LonePair
 from ..chem.atom_properties import ATOM_PROPERTIES
