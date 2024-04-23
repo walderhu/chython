@@ -30,3 +30,4 @@ clang:
 
 project:
 	pip install CachedMethods numpy lazy_object_proxy importlib_resources lxml
+	pip install pyppeteer
