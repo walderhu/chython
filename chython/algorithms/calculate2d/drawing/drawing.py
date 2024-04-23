@@ -1044,6 +1044,35 @@ class Drawer:
                     involved_ring = self.id_to_ring[involved_ring_id]
                     self.remove_ring(involved_ring)
     
+    # def hide_hydrogens(self) -> None:
+    #     hidden: List[Atom] = []
+    #     exposed: List[Atom] = []
+    #     self.structure.refresh_structure()
+    #     for atom in self.structure.graph:
+    #         if atom.type != 'H':
+    #             continue
+    #         elif atom.charge != 0:
+    #             continue
+    #         neighbour = atom.neighbours[0]
+    #         neighbour.draw.has_hydrogen = True
+    #         atom.draw.is_drawn = False
+    #         hidden.append(atom)
+    #         if len(neighbour.draw.rings) < 2 and neighbour.draw.bridged_ring is None and \
+    #                 neighbour.draw.bridged_ring is not None and len(neighbour.draw.original_rings) < 2:
+    #             atom.draw.is_drawn = False
+    #             neighbour.draw.has_hydrogen = True
+    #             hidden.append(atom)
+    #         else:
+    #             exposed.append(atom)
+    #     for atom in self.structure.graph:
+    #         atom.set_drawn_neighbours()
+    #         if atom.type == 'O':
+    #             pass
+    #     self.drawn_bonds = []
+    #     for bond_nr, bond in self.structure.bonds.items():
+    #         if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
+    #             self.drawn_bonds.append(bond)
+    #     self.drawn_atoms = self.structure.get_drawn_atoms()
     def hide_hydrogens(self) -> None:
         hidden: List[Atom] = []
         exposed: List[Atom] = []
@@ -1055,24 +1084,25 @@ class Drawer:
                 continue
             neighbour = atom.neighbours[0]
             neighbour.draw.has_hydrogen = True
-            atom.draw.is_drawn = False
-            hidden.append(atom)
-            if len(neighbour.draw.rings) < 2 and neighbour.draw.bridged_ring is None and \
-                    neighbour.draw.bridged_ring is not None and len(neighbour.draw.original_rings) < 2:
-                atom.draw.is_drawn = False
-                neighbour.draw.has_hydrogen = True
-                hidden.append(atom)
-            else:
-                exposed.append(atom)
+            # if self.should_hide_hydrogen(atom, neighbour):
+            #     atom.draw.is_drawn = False
+            #     hidden.append(atom)
+            # else:
+            #     exposed.append(atom)
+            exposed.append(atom)
         for atom in self.structure.graph:
             atom.set_drawn_neighbours()
-            if atom.type == 'O':
-                pass
         self.drawn_bonds = []
         for bond_nr, bond in self.structure.bonds.items():
             if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
                 self.drawn_bonds.append(bond)
         self.drawn_atoms = self.structure.get_drawn_atoms()
+
+    def should_hide_hydrogen(self, hydrogen_atom: Atom, neighbour_atom: Atom) -> bool:
+        # Здесь должна быть логика, которая определяет, должен ли атом водорода быть скрыт
+        # В этом примере мы просто возвращаем False, что означает, что атом водорода не будет скрыт
+        # Вам нужно будет добавить здесь свою логику для определения, когда атом водорода должен быть скрыт
+        return False
     
     def get_bridged_rings(self) -> List[Ring]:
         bridged_rings: List[Ring] = []

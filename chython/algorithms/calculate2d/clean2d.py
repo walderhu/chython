@@ -27,7 +27,6 @@ class Calculate2DMolecule:
         shift_x, shift_y = xy[0]
         for n, (x, y) in zip(order, xy):
             plane[n] = (x - shift_x, shift_y - y)
-
         bonds = []
         for n, m, _ in self.bonds():
             xn, yn = plane[n]
