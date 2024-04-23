@@ -114,8 +114,11 @@ class Drawer:
                 if dist < minimum:
                     current_atom = atom
                     minimum = dist
-            if current_atom is not None:#
-                unvisited.remove(current_atom)#
+            # if current_atom is not None:#
+                # unvisited.remove(current_atom)#
+            unvisited.discard(current_atom)
+            if current_atom is None:
+                break
             if current_atom == atom_2:
                 break
             for neighbour in self.structure.graph[current_atom]:
