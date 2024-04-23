@@ -705,10 +705,8 @@ class Vector:
 
     @staticmethod
     def get_directionality_triangle(vector_a, vector_b, vector_c):
-
         determinant = (vector_b.x - vector_a.x) * (vector_c.y - vector_a.y) - \
                       (vector_c.x - vector_a.x) * (vector_b.y - vector_a.y)
-
         if determinant < 0:
             return 'clockwise'
         elif determinant == 0:
@@ -726,14 +724,11 @@ class Vector:
 
         x_new = a * (point.x - line_point_1.x) + b * (point.y - line_point_1.y) + line_point_1.x
         y_new = b * (point.x - line_point_1.x) - a * (point.y - line_point_1.y) + line_point_1.y
-
         return Vector(x_new, y_new)
 
     @staticmethod
     def get_line_angle(point_1, point_2):
-
         difference = Vector.subtract_vectors(point_2, point_1)
-
         return difference.angle()
 
     @staticmethod
@@ -752,7 +747,6 @@ class Vector:
     def get_midpoint(vector_1, vector_2):
         x = (vector_1.x + vector_2.x) / 2
         y = (vector_1.y + vector_2.y) / 2
-
         return Vector(x, y)
 
     @staticmethod
