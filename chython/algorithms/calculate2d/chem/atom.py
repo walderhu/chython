@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Optional, List, Tuple, Dict
 
-# import copy
+import copy
 
 from ..chem.lone_pair import LonePair
 from ..chem.atom_properties import ATOM_PROPERTIES
@@ -30,7 +30,26 @@ class Atom:
         aromatic: bool, True if atom is part of an aromatic system, False if otherwise
         shells: dict of {shell_nr: Shell, ->}
     """
+    #
+    # def __new__(cls, atom_type: str, atom_nr: int, chiral: Optional[str], charge: int, aromatic: bool):
+    #     self = super().__new__(cls)  # Must explicitly create the new object
+    #     # Aside from explicit construction and return, rest of __new__
+    #     # is same as __init__
+    #     self.type = atom_type
+    #     self.nr = atom_nr
+    #     self.chiral = chiral
+    #     self.charge = charge
+    #     self.aromatic = aromatic
+    #     self.shells = {}
+    #
+    #     return self  # __new__ returns the new object
+    #
+    # def __getnewargs__(self):
+    #     # Return the arguments that *must* be passed to __new__
+    #     return self.type, self.nr, self.chiral, self.charge, self.aromatic
+
     def __init__(self, atom_type: str, atom_nr: int, chiral: Optional[str], charge: int, aromatic: bool) -> None:
+
         self.type: str = atom_type
         self.nr: int = atom_nr
         self.chiral: Optional[str] = chiral
@@ -52,8 +71,6 @@ class Atom:
         self.drawn_neighbours: List["Atom"] = []
         self.aromatic_system: Optional["AromaticSystem"] = None
         self.connectivity: Optional[Tuple[str]] = None
-        
-        # self.explicit_hydrogen: bool = False ####
 
         self.shell_nr: int = ATOM_PROPERTIES.element_to_shell_nr[self.type]
 
@@ -142,6 +159,32 @@ class Atom:
 
         return None
 
+    def get_ring_index(self, structure: "Structure") -> Optional[int]:
+        cycles = structure.cycles.all_cycles
+
+        for i, cycle in enumerate(cycles):
+            if self in cycle:
+                return i
+
+        return None
+
+    def get_ring(self, structure: "Structure") -> Optional[List["Atom"]]:
+        cycles = structure.sssr
+
+        for i, cycle in enumerate(cycles):
+            if self in cycle:
+                return cycle
+
+        return None
+
+    def is_inside_ring(self, structure: "Structure") -> bool:
+        cycles = structure.cycles.all_cycles
+
+        for i, cycle in enumerate(cycles):
+            if self in cycle:
+                return True
+
+        return False
 
     def _set_neighbours(self, structure: "Structure") -> None:
         """
@@ -170,7 +213,17 @@ class Atom:
         """
         self.neighbours.remove(neighbour)
 
- 
+    # TODO: Move method to AtomDrawProperties
+    def get_drawn_neighbours(self) -> List["Atom"]:
+        """
+        Returns all neighbours of the atom that are explicitly drawn in the visualisation
+        """
+        drawn_neighbours = []
+        for neighbour in self.neighbours:
+            if neighbour.draw.is_drawn:
+                drawn_neighbours.append(neighbour)
+
+        return drawn_neighbours
 
     def has_neighbour(self, atom_type: str) -> bool:
         """
@@ -211,6 +264,28 @@ class Atom:
         connectivity = tuple(sorted(connectivity))
         return connectivity
 
+    def _has_similar_connectivity(self, substructure_connectivity: Tuple[str]) -> bool:
+        """
+        Return True if all bond-atom combinations of the child atom are present in the parent atom, False otherwise
+
+        Parameters
+        ----------
+        substructure_connectivity: tuple of str, with each str representing the connectivity of an atom
+            Example: ('C_single', 'O_double')
+
+        """
+        parent_connectivity_copy = list(copy.copy(self.connectivity))
+        substructure_connectivity_copy = list(copy.copy(substructure_connectivity))
+
+        same_connectivity = True
+
+        for atom in substructure_connectivity_copy:
+            if atom in parent_connectivity_copy:
+                parent_connectivity_copy.remove(atom)
+            else:
+                same_connectivity = False
+
+        return same_connectivity
 
     def _add_electron_shells(self) -> None:
         """
@@ -323,6 +398,24 @@ class Atom:
 
         self.valence_shell: "Shell" = self.shells[self.shell_nr]
 
+    def in_ring(self, structure: "Structure") -> bool:
+        """
+        Returns True if atom is part of a ring (system), False if otherwise
+
+        Parameters
+        ----------
+        structure: Structure instance. Must contain the atom
+
+        """
+        assert self in structure.graph
+        cycles: List[List["Atom"]] = structure.sssr
+
+        for cycle in cycles:
+            if self in cycle:
+                return True
+
+        return False
+
     def _adjacent_to_stereobond(self) -> bool:
         """
         Returns True if atom is adjacent to a stereochemically restrictive bond, False otherwise
@@ -361,11 +454,62 @@ class Atom:
                 # All electrons have been placed and we can break out of the loop
                 break
                 
+    def get_neighbour(self, atom_type: str) -> Optional["Atom"]:
+        """
+        Returns the first encountered neighbour of type atom_type if such a neighbour exists, None otherwise
+
+        Parameters
+        ----------
+        atom_type: str, atom type according to periodic table
+
+        """
+        for neighbour in self.neighbours:
+            if neighbour.type == atom_type:
+                return neighbour
+        return None
+
+    def get_neighbours(self, atom_type: str) -> List["Atom"]:
+        """
+        Returns a list of all neighbours of type atom_type
+
+        Parameters
+        ----------
+        atom_type: str, atom type according to periodic table
+
+        """
+        neighbours: List["Atom"] = []
+        for neighbour in self.neighbours:
+            if neighbour.type == atom_type:
+                neighbours.append(neighbour)
+        return neighbours
+
     def _excite(self) -> None:
         """
         Excite electrons in valence shell
         """
         self.valence_shell.excite()
+
+    def get_non_hydrogen_neighbours(self) -> List["Atom"]:
+        """
+        Returns a list of neighbouring, non-hydrogen atoms
+        """
+        neighbours: List["Atom"] = []
+        for atom in self.neighbours:
+            if atom.type != 'H' and atom.type != '*':
+                neighbours.append(atom)
+        return neighbours
+
+    def get_non_hydrogen_bonds(self) -> List["Bond"]:
+        """
+        Returns a list of neighbouring bonds that do not neighbour a hydrogen atom
+        """
+        bonds: List["Bond"] = []
+        for bond in self.bonds:
+            if bond.atom_1.type != 'H' and bond.atom_2 == self:
+                bonds.append(bond)
+            elif bond.atom_2.type != 'H' and bond.atom_1 == self:
+                bonds.append(bond)
+        return bonds
 
     def _remove_bond(self, bond: "Bond") -> None:
         """
@@ -662,6 +806,42 @@ class Atom:
                 receiver_orbital.set_bond(donor_orbital.bond, 'pi')
                 donor_orbital._remove_bond()
 
+    # TODO: Check when this function is called
+    def _promote_pi_bond_to_d_orbital(self) -> None:
+        """
+        Promote pi-bonds from sp[x]d[y] orbitals to d-orbitals
+        """
+        assert self._is_promotable()
+
+        donor_orbitals = []
+        receiver_orbitals = []
+        for orbital in self.valence_shell.orbitals:
+            if orbital.orbital_type == 'p' and orbital.electron_nr == 2:
+                if orbital.electrons[0].atom != orbital.electrons[1].atom:
+                    donor_orbitals.append(orbital)
+
+            elif orbital.orbital_type == 'd' and orbital.electron_nr == 1:
+                receiver_orbitals.append(orbital)
+
+        donor_orbital = donor_orbitals[0]
+        receiver_orbital = receiver_orbitals[0]
+
+        moved_electron = None
+
+        for electron in donor_orbital.electrons:
+            if electron.atom != self:
+                moved_electron = electron
+
+        donor_orbital.remove_electron(moved_electron)
+        receiver_orbital.add_electron(moved_electron)
+
+        receiver_orbital.set_bond(donor_orbital.bond, 'pi')
+        donor_orbital._remove_bond()
+
+        self.valence_shell.dehybridise()
+
+        self.hybridise()
+
     def _reset_hybridisation(self) -> None:
         """
         Reset the hybridisation of the atom. Called after updating an atom's direct neighbourhood
@@ -731,42 +911,6 @@ class Atom:
             hybridisation = ATOM_PROPERTIES.steric_nr_to_hybridisation[steric_number]
 
         return hybridisation
-    
-        # TODO: Check when this function is called
-    def _promote_pi_bond_to_d_orbital(self) -> None:
-        """
-        Promote pi-bonds from sp[x]d[y] orbitals to d-orbitals
-        """
-        assert self._is_promotable()
-
-        donor_orbitals = []
-        receiver_orbitals = []
-        for orbital in self.valence_shell.orbitals:
-            if orbital.orbital_type == 'p' and orbital.electron_nr == 2:
-                if orbital.electrons[0].atom != orbital.electrons[1].atom:
-                    donor_orbitals.append(orbital)
-
-            elif orbital.orbital_type == 'd' and orbital.electron_nr == 1:
-                receiver_orbitals.append(orbital)
-
-        donor_orbital = donor_orbitals[0]
-        receiver_orbital = receiver_orbitals[0]
-
-        moved_electron = None
-
-        for electron in donor_orbital.electrons:
-            if electron.atom != self:
-                moved_electron = electron
-
-        donor_orbital.remove_electron(moved_electron)
-        receiver_orbital.add_electron(moved_electron)
-
-        receiver_orbital.set_bond(donor_orbital.bond, 'pi')
-        donor_orbital._remove_bond()
-
-        self.valence_shell.dehybridise()
-
-        self.hybridise()
 
 
 class AtomDrawProperties:

@@ -1,7 +1,7 @@
 from typing import List
 
-from ..chem.electron import Electron
 from ..chem.atom import Atom
+from ..chem.electron import Electron
 
 
 class AromaticSystem:

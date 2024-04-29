@@ -1,7 +1,8 @@
 # from .drawing import Drawer
 # from .smiles import read_smiles
-from .pikachu.drawing.drawing import Drawer
-from .pikachu.smiles.smiles import read_smiles
+from .drawing.drawing import Drawer
+from .smiles.smiles import read_smiles
+
 def clean2d(smiles):
     structure=read_smiles(smiles)
     drawer = Drawer(structure)

@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 import math
+import matplotlib
+#matplotlib.use('TkAgg')
+from matplotlib import pyplot as plt
+
 
 class Permutations:
 
@@ -705,8 +709,10 @@ class Vector:
 
     @staticmethod
     def get_directionality_triangle(vector_a, vector_b, vector_c):
+
         determinant = (vector_b.x - vector_a.x) * (vector_c.y - vector_a.y) - \
                       (vector_c.x - vector_a.x) * (vector_b.y - vector_a.y)
+
         if determinant < 0:
             return 'clockwise'
         elif determinant == 0:
@@ -724,11 +730,14 @@ class Vector:
 
         x_new = a * (point.x - line_point_1.x) + b * (point.y - line_point_1.y) + line_point_1.x
         y_new = b * (point.x - line_point_1.x) - a * (point.y - line_point_1.y) + line_point_1.y
+
         return Vector(x_new, y_new)
 
     @staticmethod
     def get_line_angle(point_1, point_2):
+
         difference = Vector.subtract_vectors(point_2, point_1)
+
         return difference.angle()
 
     @staticmethod
@@ -747,6 +756,7 @@ class Vector:
     def get_midpoint(vector_1, vector_2):
         x = (vector_1.x + vector_2.x) / 2
         y = (vector_1.y + vector_2.y) / 2
+
         return Vector(x, y)
 
     @staticmethod
@@ -816,3 +826,23 @@ class Polygon:
     def get_apothem_from_side_length(length, edge_number):
         radius = Polygon.find_polygon_radius(length, edge_number)
         return Polygon.get_apothem(radius, edge_number)
+
+
+if __name__ == "__main__":
+    vector_1 = Vector(16.927447373757524, 38.41235497102897)
+    vector_2 = Vector(28.074619755918448, 48.44931406641183)
+    vector_3 = Vector(82.01933537136128, 44.58050841492202)
+    vector_4 = Vector(82.01933537136128, 44.58050841492202)
+
+    vector_4.mirror_about_line(vector_1, vector_2)
+    labels = ['1', '2', '3', '4']
+    vectors = [vector_1, vector_2, vector_3, vector_4]
+    plt.gca().set_aspect('equal')
+    plt.scatter([vector.x for vector in vectors], [vector.y for vector in vectors], label=labels)
+
+    plt.show()
+
+
+
+
+

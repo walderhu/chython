@@ -55,6 +55,22 @@ class Shell:
                 if self.atom == electron.atom:
                     electron.set_orbital(orbital)
 
+    def count_p_orbitals(self):
+        count = 0
+        for orbital in self.orbitals:
+            if orbital.orbital_type == 'p':
+                count += 1
+
+        return count
+
+    def count_d_orbitals(self):
+        count = 0
+        for orbital in self.orbitals:
+            if orbital.orbital_type == 'd':
+                count += 1
+
+        return count
+
     def dehybridise(self):
         for orbital_set in self.orbital_sets:
             for i, orbital in enumerate(self.orbital_sets[orbital_set].orbitals):
@@ -150,6 +166,14 @@ class Shell:
 
         return lone_pairs
 
+    def get_lone_pair_nr(self):
+        lone_pair_nr = 0
+        for orbital in self.orbitals:
+            if orbital.electron_nr == 2:
+                if orbital.electrons[0].atom == orbital.electrons[1].atom:
+                    lone_pair_nr += 1
+        return lone_pair_nr
+
     def get_lone_electrons(self):
         lone_electrons = 0
         for orbital in self.orbitals:
@@ -185,3 +209,34 @@ class Shell:
             return True
         else:
             return False
+
+    def drop_electrons(self):
+
+        lone_orbitals = []
+
+        for orbital_set in ATOM_PROPERTIES.orbital_order:
+            if orbital_set in self.orbital_sets:
+                for orbital in self.orbital_sets[orbital_set].orbitals:
+                    if orbital.electron_nr == 1:
+                        if not orbital.electrons[0].aromatic:
+                            lone_orbitals.append(orbital)
+
+        while len(lone_orbitals) > 1 and (lone_orbitals[0].orbital_type != lone_orbitals[-1].orbital_type or
+                                          lone_orbitals[0].orbital_nr != lone_orbitals[-1].orbital_nr):
+            receiver_orbital = lone_orbitals[0]
+            donor_orbital = lone_orbitals[-1]
+
+            moved_electron = donor_orbital.electrons[0]
+
+            donor_orbital.remove_electron(moved_electron)
+            receiver_orbital.add_electron(moved_electron)
+            receiver_orbital.electrons[1].set_orbital(receiver_orbital)
+
+            del lone_orbitals[0]
+            del lone_orbitals[-1]
+
+    def print_shell(self):
+        for orbital in self.orbitals:
+            print(orbital)
+            print(orbital.electrons)
+            

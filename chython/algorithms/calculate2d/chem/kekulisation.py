@@ -2,7 +2,9 @@ import logging
 
 
 class Node:
+
     index = 0
+
     def __init__(self):
         self.atom = None
         self.neighbors = []
@@ -18,10 +20,67 @@ class Node:
     def set_atom(self, atom):
         self.atom = atom
 
+
+class SuperNode(Node):
+
+    def __init__(self):
+        Node.__init__(self)
+        self.subnodes = []
+        self.original_edges = []
+
+    def circle(self, node):
+        for i, v in enumerate(self.subnodes):
+            if v == node:
+                break
+        assert i < len(self.subnodes)
+
+        if i > 0 and self.subnodes[i].mate == self.subnodes[i - 1] or i == 0 and self.subnodes[i].mate == self.subnodes[
+            -1]:
+            return self.subnodes[i::-1] + self.subnodes[:i:-1]
+        else:
+            return self.subnodes[i::] + self.subnodes[:i]
+
+
 class Path:
 
     def __init__(self):
         self.nodes = []
+
+    def head(self):
+        return self.nodes[0]
+
+    def tail(self):
+        return self.nodes[-1]
+
+    def replace_head(self):
+        assert isinstance(self.nodes[0], SuperNode)
+        snode = self.nodes.pop(0)
+        for node in snode.subnodes:
+            if self.nodes[0] in node.neighbors:
+                if node.mate is None:
+                    self.nodes.insert(0, node)
+                else:
+                    for v in snode.circle(node):
+                        self.nodes.insert(0, v)
+                return
+        logging.error("cannot replace head node.")
+
+    def replace_tail(self):
+        assert isinstance(self.nodes[-1], SuperNode)
+        snode = self.nodes.pop()
+        for node in snode.subnodes:
+            if self.nodes[-1] in node.neighbors:
+                if node.mate is None:
+                    self.nodes.append(node)
+                else:
+                    for v in snode.circle(node):
+                        self.nodes.append(v)
+                return
+        logging.error("cannot replace tail node.")
+
+    def __repr__(self):
+        return str(self.nodes)
+
 
 class Match:
 
@@ -51,6 +110,13 @@ class Match:
                 index_2 = atom_to_node[neighbour]
                 nodes[index_1].neighbors.append(nodes[index_2])
 
+        return Match(nodes)
+
+    @staticmethod
+    def from_edges(N, edges):
+        nodes = [Node() for i in range(N)]
+        for i, j in edges:
+            nodes[i].neighbors.append(nodes[j])
         return Match(nodes)
 
     def clear_nodes(self):
@@ -154,3 +220,46 @@ class Match:
             path.nodes.append(path.nodes[-1].parent)
 
         return path
+
+    def find_cycles(self, node1, node2):
+        def find_ancestors(node):
+            ancestors = [node]
+            while node.parent is not None:
+                node = node.parent
+                ancestors.append(node)
+            return ancestors
+
+        ancestors1 = find_ancestors(node1)
+        ancestors2 = find_ancestors(node2)
+        i = len(ancestors1) - 1
+        j = len(ancestors2) - 1
+        while ancestors1[i] == ancestors2[j]:
+            i -= 1
+            j -= 1
+
+        cycle = ancestors1[:i + 1] + ancestors2[j + 1::-1]
+        return cycle
+
+    def shrink_blossom(self, blossom):
+        snode = SuperNode()
+        for node in blossom:
+            snode.subnodes.append(node)
+            for adj_node in node.neighbors:
+                if adj_node not in blossom:
+                    snode.original_edges.append((node, adj_node))
+
+        for node1, node2 in snode.original_edges:
+            node1.neighbors.remove(node2)
+            node2.neighbors.remove(node1)
+            node2.neighbors.append(snode)
+            snode.neighbors.append(node2)
+
+        return snode
+
+    def expand_supernode(self, snode):
+        assert isinstance(snode, SuperNode)
+        for node1, node2 in snode.original_edges:
+            node1.neighbors.append(node2)
+            node2.neighbors.append(node1)
+            node2.neighbors.remove(snode)
+            snode.neighbors.remove(node2)
