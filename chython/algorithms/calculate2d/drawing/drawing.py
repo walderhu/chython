@@ -1044,35 +1044,6 @@ class Drawer:
                     involved_ring = self.id_to_ring[involved_ring_id]
                     self.remove_ring(involved_ring)
     
-    # def hide_hydrogens(self) -> None:
-    #     hidden: List[Atom] = []
-    #     exposed: List[Atom] = []
-    #     self.structure.refresh_structure()
-    #     for atom in self.structure.graph:
-    #         if atom.type != 'H':
-    #             continue
-    #         elif atom.charge != 0:
-    #             continue
-    #         neighbour = atom.neighbours[0]
-    #         neighbour.draw.has_hydrogen = True
-    #         atom.draw.is_drawn = False
-    #         hidden.append(atom)
-    #         if len(neighbour.draw.rings) < 2 and neighbour.draw.bridged_ring is None and \
-    #                 neighbour.draw.bridged_ring is not None and len(neighbour.draw.original_rings) < 2:
-    #             atom.draw.is_drawn = False
-    #             neighbour.draw.has_hydrogen = True
-    #             hidden.append(atom)
-    #         else:
-    #             exposed.append(atom)
-    #     for atom in self.structure.graph:
-    #         atom.set_drawn_neighbours()
-    #         if atom.type == 'O':
-    #             pass
-    #     self.drawn_bonds = []
-    #     for bond_nr, bond in self.structure.bonds.items():
-    #         if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
-    #             self.drawn_bonds.append(bond)
-    #     self.drawn_atoms = self.structure.get_drawn_atoms()
     def hide_hydrogens(self) -> None:
         hidden: List[Atom] = []
         exposed: List[Atom] = []
@@ -1082,48 +1053,79 @@ class Drawer:
                 continue
             elif atom.charge != 0:
                 continue
-            # Получаем соседний атом
             neighbour = atom.neighbours[0]
-            # Устанавливаем флаг, что у соседного атома есть водород
             neighbour.draw.has_hydrogen = True
-            # Проверяем, должны ли мы скрыть атом водорода
-            if self.should_hide_hydrogen(atom, neighbour):
+            atom.draw.is_drawn = False
+            hidden.append(atom)
+            if len(neighbour.draw.rings) < 2 and neighbour.draw.bridged_ring is None and \
+                    neighbour.draw.bridged_ring is not None and len(neighbour.draw.original_rings) < 2:
                 atom.draw.is_drawn = False
+                neighbour.draw.has_hydrogen = True
                 hidden.append(atom)
             else:
                 exposed.append(atom)
-        # Обновляем список атомов, которые должны быть нарисованы
         for atom in self.structure.graph:
             atom.set_drawn_neighbours()
-        # Обновляем список связей, которые должны быть нарисованы
+            if atom.type == 'O':
+                pass
         self.drawn_bonds = []
         for bond_nr, bond in self.structure.bonds.items():
             if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
                 self.drawn_bonds.append(bond)
         self.drawn_atoms = self.structure.get_drawn_atoms()
 
-    def should_hide_hydrogen(self, hydrogen_atom: Atom, neighbour_atom: Atom) -> bool:
-        # Если включен флаг для отображения атомов водорода, не скрываем их
-        # print(f"{self.options.draw_hydrogens=}")
-        # if self.options.draw_hydrogens:
-            # return False
-        # Проверяем, является ли соседний атом частью кольца
-        if neighbour_atom.draw.rings:
-            # Если соседний атом является частью кольца, не скрываем атом водорода
-            # Добавляем дополнительную проверку, чтобы убедиться, что атом водорода не является частью кольца
-            if not hydrogen_atom.draw.rings:
-                return False
-        # Проверяем, является ли соседний атом частью двойной связи
-        if neighbour_atom.draw.bridged_ring:
-            # Если соседний атом является частью двойной связи, не скрываем атом водорода
-            # Добавляем дополнительную проверку, чтобы убедиться, что атом водорода не является частью двойной связи
-            if not hydrogen_atom.draw.bridged_ring:
-                return False
-        # Если атом водорода является частью молекулы, которая должна быть отображена, не скрываем его
-        if hydrogen_atom.draw.is_drawn:
-            return False
-        # Если ни одно из вышеуказанных условий не выполняется, скрываем атом водорода
-        return True
+
+    # def hide_hydrogens(self) -> None:
+    #     hidden: List[Atom] = []
+    #     exposed: List[Atom] = []
+    #     self.structure.refresh_structure()
+    #     for atom in self.structure.graph:
+    #         if atom.type != 'H':
+    #             continue
+    #         elif atom.charge != 0:
+    #             continue
+    #         # Получаем соседний атом
+    #         neighbour = atom.neighbours[0]
+    #         # Устанавливаем флаг, что у соседного атома есть водород
+    #         neighbour.draw.has_hydrogen = True
+    #         # Проверяем, должны ли мы скрыть атом водорода
+    #         if self.should_hide_hydrogen(atom, neighbour):
+    #             atom.draw.is_drawn = False
+    #             hidden.append(atom)
+    #         else:
+    #             exposed.append(atom)
+    #     # Обновляем список атомов, которые должны быть нарисованы
+    #     for atom in self.structure.graph:
+    #         atom.set_drawn_neighbours()
+    #     # Обновляем список связей, которые должны быть нарисованы
+    #     self.drawn_bonds = []
+    #     for bond_nr, bond in self.structure.bonds.items():
+    #         if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
+    #             self.drawn_bonds.append(bond)
+    #     self.drawn_atoms = self.structure.get_drawn_atoms()
+
+    # def should_hide_hydrogen(self, hydrogen_atom: Atom, neighbour_atom: Atom) -> bool:
+    #     # Если включен флаг для отображения атомов водорода, не скрываем их
+    #     # print(f"{self.options.draw_hydrogens=}")
+    #     # if self.options.draw_hydrogens:
+    #         # return False
+    #     # Проверяем, является ли соседний атом частью кольца
+    #     if neighbour_atom.draw.rings:
+    #         # Если соседний атом является частью кольца, не скрываем атом водорода
+    #         # Добавляем дополнительную проверку, чтобы убедиться, что атом водорода не является частью кольца
+    #         if not hydrogen_atom.draw.rings:
+    #             return False
+    #     # Проверяем, является ли соседний атом частью двойной связи
+    #     if neighbour_atom.draw.bridged_ring:
+    #         # Если соседний атом является частью двойной связи, не скрываем атом водорода
+    #         # Добавляем дополнительную проверку, чтобы убедиться, что атом водорода не является частью двойной связи
+    #         if not hydrogen_atom.draw.bridged_ring:
+    #             return False
+    #     # Если атом водорода является частью молекулы, которая должна быть отображена, не скрываем его
+    #     if hydrogen_atom.draw.is_drawn:
+    #         return False
+    #     # Если ни одно из вышеуказанных условий не выполняется, скрываем атом водорода
+    #     return True
     
     def get_bridged_rings(self) -> List[Ring]:
         bridged_rings: List[Ring] = []
