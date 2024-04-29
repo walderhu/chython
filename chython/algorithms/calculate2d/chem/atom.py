@@ -52,6 +52,8 @@ class Atom:
         self.drawn_neighbours: List["Atom"] = []
         self.aromatic_system: Optional["AromaticSystem"] = None
         self.connectivity: Optional[Tuple[str]] = None
+        
+        # self.explicit_hydrogen: bool = False ####
 
         self.shell_nr: int = ATOM_PROPERTIES.element_to_shell_nr[self.type]
 
