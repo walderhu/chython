@@ -1,6 +1,5 @@
 import unittest
 from chython import smiles
-
 import time
 import sys
 database_smiles = 'smiles_data.txt'
@@ -31,20 +30,23 @@ class TestAddFunction(unittest.TestCase):
             lines = smiles_file.readlines()
             Runs = len(lines)
             for i, line in enumerate(lines):
-                smile = line
+                smile = line.strip('\n')
                 start_time = time.time() 
                 try:
                     m = smiles(smile)
                     m.clean2d()
                 except Exception as e:
-                    errors_file.write(f"{smile} - {str(e)}\n")
+                    error_info = f"{smile} - {str(e)}"
+                    errors_file.write(error_info + "\n")
                 else:
                     elapsed_time = time.time() - start_time
                     if elapsed_time > 5:
-                        errors_file.write(f"{smile} - Processing took more than 5 seconds\n")
-                finally:
-                    progressBar = "\rProgress: " + ProgressBar(Runs, i + 1, BarLength=20, ProgressIcon="#", BarIcon="-")
+                        error_info = f"{smile} - Processing took more than 5 seconds"
+                        errors_file.write(error_info + "\n")
+                
+                progressBar = "\rProgress: " + ProgressBar(Runs, i + 1, BarLength=20, ProgressIcon="#", BarIcon="-")
                 ShowBar(progressBar)
+                
         print('\nDone.')
 
 if __name__ == '__main__':

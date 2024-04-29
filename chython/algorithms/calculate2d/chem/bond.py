@@ -77,30 +77,30 @@ class Bond:
 
         return False
 
-    def has_neighbour(self, atom_type):
-        if self.atom_1.type == atom_type:
-            return True
-        elif self.atom_2.type == atom_type:
-            return True
+    # def has_neighbour(self, atom_type):
+    #     if self.atom_1.type == atom_type:
+    #         return True
+    #     elif self.atom_2.type == atom_type:
+    #         return True
 
-        return False
+    #     return False
 
-    def get_neighbour(self, atom_type):
-        if self.atom_1.type == atom_type:
-            return self.atom_1
-        elif self.atom_2.type == atom_type:
-            return self.atom_2
-        else:
-            return None
+    # def get_neighbour(self, atom_type):
+    #     if self.atom_1.type == atom_type:
+    #         return self.atom_1
+    #     elif self.atom_2.type == atom_type:
+    #         return self.atom_2
+    #     else:
+    #         return None
 
-    def get_neighbouring_bonds(self):
-        neighbouring_bonds = []
-        for atom in self.neighbours:
-            for bond in atom.bonds:
-                if bond != self:
-                    neighbouring_bonds.append(bond)
+    # def get_neighbouring_bonds(self):
+    #     neighbouring_bonds = []
+    #     for atom in self.neighbours:
+    #         for bond in atom.bonds:
+    #             if bond != self:
+    #                 neighbouring_bonds.append(bond)
 
-        return neighbouring_bonds
+    #     return neighbouring_bonds
 
     def set_bond_summary(self):
         atom_types = sorted([atom.type for atom in self.neighbours])
@@ -132,66 +132,66 @@ class Bond:
 
         self.set_bond_summary()
 
-    def check_same_chirality(self, parent_bond, match):
-        """
-        Return True if self and parent_bond have the same chirality, False if not
+    # def check_same_chirality(self, parent_bond, match):
+    #     """
+    #     Return True if self and parent_bond have the same chirality, False if not
 
-        Input:
-        -------
-        parent_bond: Bond object
-        match: dict of {child atom: parent atom, ->}, with child atom and parent atom
-               Atom objects,representing a substructure match of a child structure to
-               a parent structure
+    #     Input:
+    #     -------
+    #     parent_bond: Bond object
+    #     match: dict of {child atom: parent atom, ->}, with child atom and parent atom
+    #            Atom objects,representing a substructure match of a child structure to
+    #            a parent structure
 
-        Output:
-        -------
-        same_chirality: bool, True if bond chirality of the child bond (self) matches
-                        the bond chirality of the parent bond, False otherwise
+    #     Output:
+    #     -------
+    #     same_chirality: bool, True if bond chirality of the child bond (self) matches
+    #                     the bond chirality of the parent bond, False otherwise
 
-        """
-        same_chirality = True
-        for atom in self.chiral_dict:
-            if atom.type != 'H':
-                parent_atom = match[atom]
-                for atom_2 in self.chiral_dict[atom]:
-                    if atom_2.type != 'H':
-                        parent_atom_2 = match[atom_2]
-                        orientation = self.chiral_dict[atom][atom_2]
-                        parent_orientation = parent_bond.chiral_dict[parent_atom][parent_atom_2]
-                        if orientation != parent_orientation:
-                            same_chirality = False
-                            break
-            if not same_chirality:
-                break
+    #     """
+    #     same_chirality = True
+    #     for atom in self.chiral_dict:
+    #         if atom.type != 'H':
+    #             parent_atom = match[atom]
+    #             for atom_2 in self.chiral_dict[atom]:
+    #                 if atom_2.type != 'H':
+    #                     parent_atom_2 = match[atom_2]
+    #                     orientation = self.chiral_dict[atom][atom_2]
+    #                     parent_orientation = parent_bond.chiral_dict[parent_atom][parent_atom_2]
+    #                     if orientation != parent_orientation:
+    #                         same_chirality = False
+    #                         break
+    #         if not same_chirality:
+    #             break
 
-        return same_chirality
+    #     return same_chirality
 
-    def break_bond(self):
-        """
-        Remove shared electrons between atoms from their orbitals to break a bond.
+    # def break_bond(self):
+    #     """
+    #     Remove shared electrons between atoms from their orbitals to break a bond.
 
-        Note: the products left behind will be radicals!
-        """
-        assert self.type == 'single'
+    #     Note: the products left behind will be radicals!
+    #     """
+    #     assert self.type == 'single'
 
-        electron_1, electron_2 = self.electrons
-        orbital_1 = electron_1.orbital
-        orbital_2 = electron_2.orbital
+    #     electron_1, electron_2 = self.electrons
+    #     orbital_1 = electron_1.orbital
+    #     orbital_2 = electron_2.orbital
 
-        orbital_1.remove_electron(electron_2)
-        orbital_2.remove_electron(electron_1)
+    #     orbital_1.remove_electron(electron_2)
+    #     orbital_2.remove_electron(electron_1)
 
-        orbital_1._remove_bond()
-        orbital_2._remove_bond()
+    #     orbital_1._remove_bond()
+    #     orbital_2._remove_bond()
 
-        self.atom_1._remove_neighbour(self.atom_2)
-        self.atom_2._remove_neighbour(self.atom_1)
+    #     self.atom_1._remove_neighbour(self.atom_2)
+    #     self.atom_2._remove_neighbour(self.atom_1)
 
-        self.atom_1._remove_bond(self)
-        self.atom_2._remove_bond(self)
+    #     self.atom_1._remove_bond(self)
+    #     self.atom_2._remove_bond(self)
 
-        self.atom_1.chiral = None
-        self.atom_2.chiral = None
+    #     self.atom_1.chiral = None
+    #     self.atom_2.chiral = None
 
 
     def combine_hybrid_orbitals(self):
@@ -252,93 +252,93 @@ class Bond:
         s_bonding_orbital_1.set_bond(self, 'sigma')
         s_bonding_orbital_2.set_bond(self, 'sigma')
 
-    def make_single(self):
+    # def make_single(self):
 
-        assert self.type == 'double'
+    #     assert self.type == 'double'
 
-        double_bond_electrons = []
+    #     double_bond_electrons = []
 
-        for electron in self.electrons:
-            if electron.orbital.bonding_orbital == 'pi':
-                double_bond_electrons.append(electron)
+    #     for electron in self.electrons:
+    #         if electron.orbital.bonding_orbital == 'pi':
+    #             double_bond_electrons.append(electron)
 
-        assert len(double_bond_electrons) == 2
+    #     assert len(double_bond_electrons) == 2
 
-        electron_1, electron_2 = double_bond_electrons
+    #     electron_1, electron_2 = double_bond_electrons
 
-        orbital_1 = electron_1.orbital
-        orbital_2 = electron_2.orbital
+    #     orbital_1 = electron_1.orbital
+    #     orbital_2 = electron_2.orbital
 
-        orbital_1.remove_electron(electron_2)
-        orbital_2.remove_electron(electron_1)
+    #     orbital_1.remove_electron(electron_2)
+    #     orbital_2.remove_electron(electron_1)
 
-        orbital_1._remove_bond()
-        orbital_2._remove_bond()
+    #     orbital_1._remove_bond()
+    #     orbital_2._remove_bond()
 
-        self.electrons.remove(electron_1)
-        self.electrons.remove(electron_2)
+    #     self.electrons.remove(electron_1)
+    #     self.electrons.remove(electron_2)
 
-        if self.chiral_dict:
-            self.chiral_dict = {}
+    #     if self.chiral_dict:
+    #         self.chiral_dict = {}
 
-        if self.chiral:
-            self.chiral = False
+    #     if self.chiral:
+    #         self.chiral = False
 
-        self.type = 'single'
+    #     self.type = 'single'
 
-        self.atom_1._reset_hybridisation()
-        self.atom_2._reset_hybridisation()
+    #     self.atom_1._reset_hybridisation()
+    #     self.atom_2._reset_hybridisation()
 
-        self.set_bond_summary()
+    #     self.set_bond_summary()
 
-    def make_double(self):
-        assert self.type == 'single'
+    # def make_double(self):
+    #     assert self.type == 'single'
 
-        electron_1 = None
-        electron_2 = None
+    #     electron_1 = None
+    #     electron_2 = None
 
-        orbital_1 = None
-        orbital_2 = None
+    #     orbital_1 = None
+    #     orbital_2 = None
 
-        for orbital in self.atom_1.valence_shell.orbitals:
-            if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
-                orbital_1 = orbital
-                electron_1 = orbital.electrons[0]
-                break
+    #     for orbital in self.atom_1.valence_shell.orbitals:
+    #         if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
+    #             orbital_1 = orbital
+    #             electron_1 = orbital.electrons[0]
+    #             break
 
-        for orbital in self.atom_2.valence_shell.orbitals:
-            if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
-                orbital_2 = orbital
-                electron_2 = orbital.electrons[0]
-                break
+    #     for orbital in self.atom_2.valence_shell.orbitals:
+    #         if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
+    #             orbital_2 = orbital
+    #             electron_2 = orbital.electrons[0]
+    #             break
 
-        orbital_1.add_electron(electron_2)
-        orbital_2.add_electron(electron_1)
+    #     orbital_1.add_electron(electron_2)
+    #     orbital_2.add_electron(electron_1)
 
-        orbital_1.set_bond(self, 'pi')
-        orbital_2.set_bond(self, 'pi')
+    #     orbital_1.set_bond(self, 'pi')
+    #     orbital_2.set_bond(self, 'pi')
 
-        self.electrons.append(electron_1)
-        self.electrons.append(electron_2)
-        self.type = 'double'
+    #     self.electrons.append(electron_1)
+    #     self.electrons.append(electron_2)
+    #     self.type = 'double'
 
-        self.atom_1._reset_hybridisation()
-        self.atom_2._reset_hybridisation()
+    #     self.atom_1._reset_hybridisation()
+    #     self.atom_2._reset_hybridisation()
 
-        self.atom_1.chiral = None
-        self.atom_2.chiral = None
+    #     self.atom_1.chiral = None
+    #     self.atom_2.chiral = None
         
-        self.set_bond_summary()
+    #     self.set_bond_summary()
 
-        for bond in self.atom_1.bonds:
-            if bond.type == 'double':
-                bond.chiral = False
-                bond.chiral_dict = {}
+    #     for bond in self.atom_1.bonds:
+    #         if bond.type == 'double':
+    #             bond.chiral = False
+    #             bond.chiral_dict = {}
 
-        for bond in self.atom_2.bonds:
-            if bond.type == 'double':
-                bond.chiral = False
-                bond.chiral_dict = {}
+    #     for bond in self.atom_2.bonds:
+    #         if bond.type == 'double':
+    #             bond.chiral = False
+    #             bond.chiral_dict = {}
 
 
     def combine_p_orbitals(self):

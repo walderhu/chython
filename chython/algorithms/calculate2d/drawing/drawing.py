@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 from typing import Union, List, Tuple, Dict, Set, Generator, Optional, TYPE_CHECKING
 import math
-import numpy as np
+# import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
-from io import StringIO
+# from io import StringIO
 import re
 
 from ..drawing.rings import Ring, RingOverlap, find_neighbouring_rings, rings_connected_by_bridge, \
     find_bridged_systems
 from ..math_functions import Vector, Polygon, Line
-from ..chem.chirality import get_chiral_permutations
-from ..chem.atom_properties import ATOM_PROPERTIES
+# from ..chem.chirality import get_chiral_permutations
+# from ..chem.atom_properties import ATOM_PROPERTIES
 from ..chem.atom import Atom
 from ..chem.bond import Bond
-from ..chem.lone_pair import LonePair
+# from ..chem.lone_pair import LonePair
 from ..chem.structure import Structure
 from ..errors import DrawingError
-from ..drawing.colours import RANDOM_PALETTE_2, get_hex
+# from ..drawing.colours import RANDOM_PALETTE_2, get_hex
 
 if TYPE_CHECKING:
     pass
@@ -382,50 +382,50 @@ class Drawer:
         self.svg_groups = {}
         self.annotation = annotation
 
-    def colour_by_annotation(self, value_to_colour: Optional[Dict[str, str]] = None, verbose: bool = False) -> None:
-        """
-        Colour atoms by their annotations
+    # def colour_by_annotation(self, value_to_colour: Optional[Dict[str, str]] = None, verbose: bool = False) -> None:
+    #     """
+    #     Colour atoms by their annotations
 
-        Parameters
-        ----------
-        value_to_colour: dict of {annotation: colour, ->}, with annotation and colour both str, and colour a hex code.
-            If dictionary is not given, . will use a default palette containing 18 colours
-        verbose: bool, if True, print warnings when there are insufficient colours in the default palette
+    #     Parameters
+    #     ----------
+    #     value_to_colour: dict of {annotation: colour, ->}, with annotation and colour both str, and colour a hex code.
+    #         If dictionary is not given, . will use a default palette containing 18 colours
+    #     verbose: bool, if True, print warnings when there are insufficient colours in the default palette
 
-        """
-        assert self.annotation
-        self.annotation_to_colour = {}
+    #     """
+    #     assert self.annotation
+    #     self.annotation_to_colour = {}
 
-        annotation_values: Set[str] = set()
-        for atom in self.structure.graph:
-            if atom.annotations.has_annotation(self.annotation):
-                annotation_values.add(atom.annotations.get_annotation(self.annotation))
+    #     annotation_values: Set[str] = set()
+    #     for atom in self.structure.graph:
+    #         if atom.annotations.has_annotation(self.annotation):
+    #             annotation_values.add(atom.annotations.get_annotation(self.annotation))
 
-        annotation_values: List[str] = list(annotation_values)
-        annotation_values.sort()
+    #     annotation_values: List[str] = list(annotation_values)
+    #     annotation_values.sort()
 
-        if value_to_colour is not None:
-            for annotation_value in annotation_values:
-                if annotation_value not in value_to_colour:
-                    raise ValueError(f"Could not find colour for {annotation_value}. Please provide a colour for each \
-                    annotation value in the structure.")
+    #     if value_to_colour is not None:
+    #         for annotation_value in annotation_values:
+    #             if annotation_value not in value_to_colour:
+    #                 raise ValueError(f"Could not find colour for {annotation_value}. Please provide a colour for each \
+    #                 annotation value in the structure.")
 
-            for annotation_value, colour in value_to_colour.items():
-                self.annotation_to_colour[annotation_value] = get_hex(colour)
+    #         for annotation_value, colour in value_to_colour.items():
+    #             self.annotation_to_colour[annotation_value] = get_hex(colour)
 
-        else:
-            if len(RANDOM_PALETTE_2) < len(annotation_values):
-                if verbose:
-                    print("Warning: Not enough colours in the default palette to assign a unique colour to each \
-                    annotation. Use the parameter 'value_to_colour' to provide your own hex codes instead.")
-            self.annotation_to_colour = {}
-            for i, annotation_value in enumerate(annotation_values):
-                colour = RANDOM_PALETTE_2[i % len(RANDOM_PALETTE_2)]
-                self.annotation_to_colour[annotation_value] = get_hex(colour)
+    #     else:
+    #         if len(RANDOM_PALETTE_2) < len(annotation_values):
+    #             if verbose:
+    #                 print("Warning: Not enough colours in the default palette to assign a unique colour to each \
+    #                 annotation. Use the parameter 'value_to_colour' to provide your own hex codes instead.")
+    #         self.annotation_to_colour = {}
+    #         for i, annotation_value in enumerate(annotation_values):
+    #             colour = RANDOM_PALETTE_2[i % len(RANDOM_PALETTE_2)]
+    #             self.annotation_to_colour[annotation_value] = get_hex(colour)
 
-        for atom in self.structure.graph:
-            if atom.annotations.has_annotation(self.annotation):
-                atom.draw.colour = self.annotation_to_colour[atom.annotations.get_annotation(self.annotation)]
+    #     for atom in self.structure.graph:
+    #         if atom.annotations.has_annotation(self.annotation):
+    #             atom.draw.colour = self.annotation_to_colour[atom.annotations.get_annotation(self.annotation)]
 
     # TODO: Should this function move to Structure?
 
@@ -868,255 +868,255 @@ class Drawer:
 
         return clashing_atoms
 
-    # TODO: Check if implicit hydrogens are excluded
-    def _prioritise_chiral_bonds(self, chiral_center: Atom) -> List[Atom]:
-        """
-        Returns a list of atoms, indicating the order in which atoms adjacent to a chiral center should be prioritised
-            for being depicted with a wedged bond
+    # # TODO: Check if implicit hydrogens are excluded
+    # def _prioritise_chiral_bonds(self, chiral_center: Atom) -> List[Atom]:
+    #     """
+    #     Returns a list of atoms, indicating the order in which atoms adjacent to a chiral center should be prioritised
+    #         for being depicted with a wedged bond
 
-        Parameters
-        ----------
-        chiral_center: Atom instance, must be a chiral center in the structure
-        """
+    #     Parameters
+    #     ----------
+    #     chiral_center: Atom instance, must be a chiral center in the structure
+    #     """
 
-        subtree_1_size = self.get_subgraph_size(chiral_center.neighbours[0], {chiral_center})
-        subtree_2_size = self.get_subgraph_size(chiral_center.neighbours[1], {chiral_center})
-        subtree_3_size = self.get_subgraph_size(chiral_center.neighbours[2], {chiral_center})
+    #     subtree_1_size = self.get_subgraph_size(chiral_center.neighbours[0], {chiral_center})
+    #     subtree_2_size = self.get_subgraph_size(chiral_center.neighbours[1], {chiral_center})
+    #     subtree_3_size = self.get_subgraph_size(chiral_center.neighbours[2], {chiral_center})
 
-        sizes_and_atoms = [(subtree_1_size, chiral_center.neighbours[0]),
-                           (subtree_2_size, chiral_center.neighbours[1]),
-                           (subtree_3_size, chiral_center.neighbours[2])]
+    #     sizes_and_atoms = [(subtree_1_size, chiral_center.neighbours[0]),
+    #                        (subtree_2_size, chiral_center.neighbours[1]),
+    #                        (subtree_3_size, chiral_center.neighbours[2])]
 
-        if len(chiral_center.neighbours) == 4:
-            subtree_4_size = self.get_subgraph_size(chiral_center.neighbours[3], {chiral_center})
-            sizes_and_atoms.append((subtree_4_size, chiral_center.neighbours[3]))
+    #     if len(chiral_center.neighbours) == 4:
+    #         subtree_4_size = self.get_subgraph_size(chiral_center.neighbours[3], {chiral_center})
+    #         sizes_and_atoms.append((subtree_4_size, chiral_center.neighbours[3]))
 
-        # Sort first by subtree size and then by atom priority
-        sizes_and_atoms.sort(key=lambda x: (x[0], ATOM_PROPERTIES.element_to_atomic_nr[x[1].type]))
+    #     # Sort first by subtree size and then by atom priority
+    #     sizes_and_atoms.sort(key=lambda x: (x[0], ATOM_PROPERTIES.element_to_atomic_nr[x[1].type]))
 
-        options_h: List[Atom] = []
-        options: List[Atom] = []
-        backup_options_rings: List[Atom] = []
-        backup_options_chiral_noring: List[Atom] = []
-        backup_options_chiral_ring: List[Atom] = []
-        backup_options_chiral_neighbour: List[Atom] = []
-        backup_options_chiral_neighbour_ring: List[Atom] = []
-        non_options: List[Atom] = []
+    #     options_h: List[Atom] = []
+    #     options: List[Atom] = []
+    #     backup_options_rings: List[Atom] = []
+    #     backup_options_chiral_noring: List[Atom] = []
+    #     backup_options_chiral_ring: List[Atom] = []
+    #     backup_options_chiral_neighbour: List[Atom] = []
+    #     backup_options_chiral_neighbour_ring: List[Atom] = []
+    #     non_options: List[Atom] = []
 
-        for neighbour in [size_and_atom[1] for size_and_atom in sizes_and_atoms]:
-            # Priotitise explicit hydrogens
-            if neighbour.type == 'H':
-                options_h.append(neighbour)
-            else:
-                other_chiral_centre = False
+    #     for neighbour in [size_and_atom[1] for size_and_atom in sizes_and_atoms]:
+    #         # Priotitise explicit hydrogens
+    #         if neighbour.type == 'H':
+    #             options_h.append(neighbour)
+    #         else:
+    #             other_chiral_centre = False
 
-                for atom in neighbour.neighbours:
-                    if atom != chiral_center and atom.chiral:
-                        other_chiral_centre = True
-                        break
+    #             for atom in neighbour.neighbours:
+    #                 if atom != chiral_center and atom.chiral:
+    #                     other_chiral_centre = True
+    #                     break
 
-                in_ring = neighbour.in_ring(self.structure)
+    #             in_ring = neighbour.in_ring(self.structure)
 
-                if self.structure.bond_lookup[chiral_center][neighbour].type != 'single':
-                    non_options.append(neighbour)
+    #             if self.structure.bond_lookup[chiral_center][neighbour].type != 'single':
+    #                 non_options.append(neighbour)
 
-                # Then, prioritise atoms not in a ring and not adjacent to a chiral centre
+    #             # Then, prioritise atoms not in a ring and not adjacent to a chiral centre
 
-                elif not other_chiral_centre and not in_ring and not neighbour.chiral:
-                    options.append(neighbour)
+    #             elif not other_chiral_centre and not in_ring and not neighbour.chiral:
+    #                 options.append(neighbour)
 
-                # Then, prioritise atoms not in a ring and adjacent to a chiral centre
+    #             # Then, prioritise atoms not in a ring and adjacent to a chiral centre
 
-                elif other_chiral_centre and not neighbour.chiral and not in_ring:
-                    backup_options_chiral_noring.append(neighbour)
+    #             elif other_chiral_centre and not neighbour.chiral and not in_ring:
+    #                 backup_options_chiral_noring.append(neighbour)
 
-                # Finally, consider some backup options
+    #             # Finally, consider some backup options
 
-                elif in_ring and not other_chiral_centre and not neighbour.chiral:
-                    backup_options_rings.append(neighbour)
+    #             elif in_ring and not other_chiral_centre and not neighbour.chiral:
+    #                 backup_options_rings.append(neighbour)
 
-                elif in_ring and other_chiral_centre and not neighbour.chiral:
-                    backup_options_chiral_ring.append(neighbour)
+    #             elif in_ring and other_chiral_centre and not neighbour.chiral:
+    #                 backup_options_chiral_ring.append(neighbour)
 
-                elif not in_ring and neighbour.chiral:
-                    backup_options_chiral_neighbour.append(neighbour)
+    #             elif not in_ring and neighbour.chiral:
+    #                 backup_options_chiral_neighbour.append(neighbour)
 
-                else:
-                    backup_options_chiral_neighbour_ring.append(neighbour)
+    #             else:
+    #                 backup_options_chiral_neighbour_ring.append(neighbour)
 
-        priority = options_h + options + backup_options_chiral_noring + \
-            backup_options_rings + backup_options_chiral_ring + backup_options_chiral_neighbour + \
-            backup_options_chiral_neighbour_ring + non_options
+    #     priority = options_h + options + backup_options_chiral_noring + \
+    #         backup_options_rings + backup_options_chiral_ring + backup_options_chiral_neighbour + \
+    #         backup_options_chiral_neighbour_ring + non_options
 
-        if chiral_center.type == 'C':
-            assert len(priority) == 4
+    #     if chiral_center.type == 'C':
+    #         assert len(priority) == 4
 
-        return priority
+    #     return priority
 
-    @staticmethod
-    def _place_eclipsed_bond(hydrogen: Atom, angles_between_lines: List[float], atom_order: List[Atom],
-                             wedge_atom: Atom) -> None:
-        """
-        Find the conventional position for an eclipsed bond and adjust atom order accordingly
+    # @staticmethod
+    # def _place_eclipsed_bond(hydrogen: Atom, angles_between_lines: List[float], atom_order: List[Atom],
+    #                          wedge_atom: Atom) -> None:
+    #     """
+    #     Find the conventional position for an eclipsed bond and adjust atom order accordingly
 
-        Parameters
-        ----------
-        hydrogen: Atom instance, hydrogen to be placed adjacent to chiral center
-        angles_between_lines: list of float, with each float representing an angle between two bonds
-        atom_order: list of Atom instances, with each atom a non-hydrogen neighbour of a chiral center
-        wedge_atom: Atom instance, neighbour of chiral center whose incoming bond is drawn as a wedge
-        """
-        position: Optional[int] = None
+    #     Parameters
+    #     ----------
+    #     hydrogen: Atom instance, hydrogen to be placed adjacent to chiral center
+    #     angles_between_lines: list of float, with each float representing an angle between two bonds
+    #     atom_order: list of Atom instances, with each atom a non-hydrogen neighbour of a chiral center
+    #     wedge_atom: Atom instance, neighbour of chiral center whose incoming bond is drawn as a wedge
+    #     """
+    #     position: Optional[int] = None
 
-        for i, angle in enumerate(angles_between_lines):
+    #     for i, angle in enumerate(angles_between_lines):
 
-            if round(angle, 3) >= round(math.pi, 3):
-                position = i
+    #         if round(angle, 3) >= round(math.pi, 3):
+    #             position = i
 
-        if position is not None:
-            atom_order.insert(position, hydrogen)
-        else:
-            wedge_index = atom_order.index(wedge_atom)
-            atom_order.insert(wedge_index + 1, hydrogen)
+    #     if position is not None:
+    #         atom_order.insert(position, hydrogen)
+    #     else:
+    #         wedge_index = atom_order.index(wedge_atom)
+    #         atom_order.insert(wedge_index + 1, hydrogen)
 
-    @staticmethod
-    def _reorder(atom_order: List[Atom], wedge_atom: Atom) -> List[Atom]:
-        """
-        Re-order order in which atoms are drawn around chiral centre such that the list starts with wedge_atom
+    # @staticmethod
+    # def _reorder(atom_order: List[Atom], wedge_atom: Atom) -> List[Atom]:
+    #     """
+    #     Re-order order in which atoms are drawn around chiral centre such that the list starts with wedge_atom
 
-        Parameters
-        ----------
-        atom_order: list of Atom instances, neighbours of a chiral center
-        wedge_atom: Atom instance, neighbour of chiral center whose incoming bond is drawn as a wedge
+    #     Parameters
+    #     ----------
+    #     atom_order: list of Atom instances, neighbours of a chiral center
+    #     wedge_atom: Atom instance, neighbour of chiral center whose incoming bond is drawn as a wedge
 
-        Returns
-        -------
-        new_order: list of Atom instances, reordered
+    #     Returns
+    #     -------
+    #     new_order: list of Atom instances, reordered
 
-        """
-        first_index = atom_order.index(wedge_atom)
-        new_order = atom_order[first_index:] + atom_order[:first_index]
-        return new_order
+    #     """
+    #     first_index = atom_order.index(wedge_atom)
+    #     new_order = atom_order[first_index:] + atom_order[:first_index]
+    #     return new_order
 
-    def move_structure(self, x: float = 0.0, y: float = 0.0) -> None:
-        """
-        Move the entire structure by vector [x, y]
+    # def move_structure(self, x: float = 0.0, y: float = 0.0) -> None:
+    #     """
+    #     Move the entire structure by vector [x, y]
 
-        Parameters
-        ----------
-        x: number of pixels to move horizontally
-        y: number of pixels to move vertically
-        """
-        for atom in self.structure.graph:
-            if atom.draw.is_drawn:
-                atom.draw.position.x += x
-                atom.draw.position.y += y
+    #     Parameters
+    #     ----------
+    #     x: number of pixels to move horizontally
+    #     y: number of pixels to move vertically
+    #     """
+    #     for atom in self.structure.graph:
+    #         if atom.draw.is_drawn:
+    #             atom.draw.position.x += x
+    #             atom.draw.position.y += y
     
-    def _determine_chirality(self, chiral_center: Atom) -> Tuple[Bond, str]:
-        """
-        Return bond to be drawn as wedge as well as the direction of the wedge
+    # def _determine_chirality(self, chiral_center: Atom) -> Tuple[Bond, str]:
+    #     """
+    #     Return bond to be drawn as wedge as well as the direction of the wedge
 
-        Parameters
-        ----------
-        chiral_center: Atom instance, a chiral center
+    #     Parameters
+    #     ----------
+    #     chiral_center: Atom instance, a chiral center
 
-        Returns
-        -------
-        wedge_bond: Bond instance adjacent to the chiral center which is to be drawn as a wedge
-        wedge: str, 'front' or 'back', identifies the type of wedge that should be drawn
+    #     Returns
+    #     -------
+    #     wedge_bond: Bond instance adjacent to the chiral center which is to be drawn as a wedge
+    #     wedge: str, 'front' or 'back', identifies the type of wedge that should be drawn
 
-        """
+    #     """
 
-        # Get all angles of all drawn atoms to the chiral center
+    #     # Get all angles of all drawn atoms to the chiral center
 
-        angles_and_atoms = []
+    #     angles_and_atoms = []
 
-        for neighbour in chiral_center.neighbours:
-            if neighbour.draw.is_drawn:
-                angle = Vector.get_line_angle(chiral_center.draw.position, neighbour.draw.position)
-                if angle < 0:
-                    angle += 2 * math.pi
-                angles_and_atoms.append((angle, neighbour))
+    #     for neighbour in chiral_center.neighbours:
+    #         if neighbour.draw.is_drawn:
+    #             angle = Vector.get_line_angle(chiral_center.draw.position, neighbour.draw.position)
+    #             if angle < 0:
+    #                 angle += 2 * math.pi
+    #             angles_and_atoms.append((angle, neighbour))
 
-        # sort them by angle
+    #     # sort them by angle
 
-        angles_and_atoms.sort(key=lambda x: x[0])
+    #     angles_and_atoms.sort(key=lambda x: x[0])
 
-        # get the angles between all adjacent atoms
+    #     # get the angles between all adjacent atoms
 
-        angles_between_lines = []
-        atom_order = []
+    #     angles_between_lines = []
+    #     atom_order = []
 
-        for i, (angle_1, atom) in enumerate(angles_and_atoms):
+    #     for i, (angle_1, atom) in enumerate(angles_and_atoms):
 
-            angle_2 = angles_and_atoms[i - 1][0]
-            if angle_2 > angle_1:
-                angle_between_lines = 2 * math.pi - angle_2 + angle_1
-            else:
-                angle_between_lines = angle_1 - angle_2
+    #         angle_2 = angles_and_atoms[i - 1][0]
+    #         if angle_2 > angle_1:
+    #             angle_between_lines = 2 * math.pi - angle_2 + angle_1
+    #         else:
+    #             angle_between_lines = angle_1 - angle_2
 
-            atom_order.append(atom)
+    #         atom_order.append(atom)
 
-            angles_between_lines.append(angle_between_lines)
+    #         angles_between_lines.append(angle_between_lines)
 
-        # Determine which atoms are the best candidates for receiving an incoming chiral bond
-        priority: List[Atom] = self._prioritise_chiral_bonds(chiral_center)
+    #     # Determine which atoms are the best candidates for receiving an incoming chiral bond
+    #     priority: List[Atom] = self._prioritise_chiral_bonds(chiral_center)
 
-        # This means a hydrogen or lone pair that takes up a sp3 orbital was not drawn
-        if len(atom_order) == 3:
+    #     # This means a hydrogen or lone pair that takes up a sp3 orbital was not drawn
+    #     if len(atom_order) == 3:
 
-            if chiral_center.has_neighbour('H'):
-                hydrogen = chiral_center.get_neighbour('H')
-                assert not hydrogen.draw.is_drawn
-                eclipsed_element = hydrogen
-                wedge_atom = priority[1]  # The atom after the implicit hydrogen
+    #         if chiral_center.has_neighbour('H'):
+    #             hydrogen = chiral_center.get_neighbour('H')
+    #             assert not hydrogen.draw.is_drawn
+    #             eclipsed_element = hydrogen
+    #             wedge_atom = priority[1]  # The atom after the implicit hydrogen
 
-            elif chiral_center.lone_pairs:
-                lone_pair = chiral_center.lone_pairs[0]
-                eclipsed_element = lone_pair
-                wedge_atom = priority[0]
-            else:
-                raise DrawingError("chiral center")
+    #         elif chiral_center.lone_pairs:
+    #             lone_pair = chiral_center.lone_pairs[0]
+    #             eclipsed_element = lone_pair
+    #             wedge_atom = priority[0]
+    #         else:
+    #             raise DrawingError("chiral center")
 
-            # Eclipsed elements are NOT drawn, but their implied placement matters in correctly
-            # drawing of a chiral center
-            self._place_eclipsed_bond(eclipsed_element, angles_between_lines, atom_order, wedge_atom)
+    #         # Eclipsed elements are NOT drawn, but their implied placement matters in correctly
+    #         # drawing of a chiral center
+    #         self._place_eclipsed_bond(eclipsed_element, angles_between_lines, atom_order, wedge_atom)
 
-        else:
-            wedge_atom = priority[0]
+    #     else:
+    #         wedge_atom = priority[0]
 
-        assert len(atom_order) == 4
+    #     assert len(atom_order) == 4
 
-        atom_order = self._reorder(atom_order, wedge_atom)
+    #     atom_order = self._reorder(atom_order, wedge_atom)
 
-        original_order: List[Union[Atom, LonePair]] = chiral_center.neighbours[:]
+    #     original_order: List[Union[Atom, LonePair]] = chiral_center.neighbours[:]
 
-        # It is possible that a chiral center only has 3 bonds, if a lone pair occupies the fourth sp3 orbital
-        if len(original_order) == 3:
-            if chiral_center.lone_pairs:
-                original_order.append(chiral_center.lone_pairs[0])
-            else:
-                raise DrawingError("chiral center")
+    #     # It is possible that a chiral center only has 3 bonds, if a lone pair occupies the fourth sp3 orbital
+    #     if len(original_order) == 3:
+    #         if chiral_center.lone_pairs:
+    #             original_order.append(chiral_center.lone_pairs[0])
+    #         else:
+    #             raise DrawingError("chiral center")
 
-        order_matches_chirality: bool = False
+    #     order_matches_chirality: bool = False
 
-        # Get all 12 list permutations that match the chirality of the original order
-        chiral_permutations = get_chiral_permutations(original_order)
-        if tuple(atom_order) in chiral_permutations:
-            order_matches_chirality = True
+    #     # Get all 12 list permutations that match the chirality of the original order
+    #     chiral_permutations = get_chiral_permutations(original_order)
+    #     if tuple(atom_order) in chiral_permutations:
+    #         order_matches_chirality = True
 
-        if order_matches_chirality and chiral_center.chiral == 'counterclockwise':
-            wedge = 'front'
-        elif order_matches_chirality and chiral_center.chiral == 'clockwise':
-            wedge = 'back'
-        elif not order_matches_chirality and chiral_center.chiral == 'counterclockwise':
-            wedge = 'back'
-        else:
-            wedge = 'front'
+    #     if order_matches_chirality and chiral_center.chiral == 'counterclockwise':
+    #         wedge = 'front'
+    #     elif order_matches_chirality and chiral_center.chiral == 'clockwise':
+    #         wedge = 'back'
+    #     elif not order_matches_chirality and chiral_center.chiral == 'counterclockwise':
+    #         wedge = 'back'
+    #     else:
+    #         wedge = 'front'
 
-        wedge_bond: Bond = self.structure.bond_lookup[wedge_atom][chiral_center]
+    #     wedge_bond: Bond = self.structure.bond_lookup[wedge_atom][chiral_center]
 
-        return wedge_bond, wedge
+    #     return wedge_bond, wedge
 
     def set_chiral_bonds(self) -> None:
         """
@@ -1129,427 +1129,427 @@ class Drawer:
                 self.chiral_bonds.append(bond)
                 self.chiral_bond_to_orientation[bond] = (wedge, atom)
 
-    def flip_y_axis(self) -> None:
-        """
-        Flip a structure across its y-axis
-        """
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                atom.draw.position.y = -atom.draw.position.y
+    # def flip_y_axis(self) -> None:
+    #     """
+    #     Flip a structure across its y-axis
+    #     """
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             atom.draw.position.y = -atom.draw.position.y
 
-    def convert_to_int(self) -> None:
-        """
-        Convert all atom positions to integer values
-        """
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                atom.draw.position.x = int(atom.draw.position.x)
-                atom.draw.position.y = int(atom.draw.position.y)
+    # def convert_to_int(self) -> None:
+    #     """
+    #     Convert all atom positions to integer values
+    #     """
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             atom.draw.position.x = int(atom.draw.position.x)
+    #             atom.draw.position.y = int(atom.draw.position.y)
 
-    def move_to_positive_coords(self) -> None:
-        """
-        Move the structure to a positive coordinate system
-        """
-        min_x = 100000000
-        min_y = 100000000
+    # def move_to_positive_coords(self) -> None:
+    #     """
+    #     Move the structure to a positive coordinate system
+    #     """
+    #     min_x = 100000000
+    #     min_y = 100000000
 
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                if atom.draw.position.x < min_x:
-                    min_x = atom.draw.position.x
-                if atom.draw.position.y < min_y:
-                    min_y = atom.draw.position.y
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             if atom.draw.position.x < min_x:
+    #                 min_x = atom.draw.position.x
+    #             if atom.draw.position.y < min_y:
+    #                 min_y = atom.draw.position.y
 
-        x_translation = abs(min(0, min_x))
-        y_translation = abs(min(0, min_y))
+    #     x_translation = abs(min(0, min_x))
+    #     y_translation = abs(min(0, min_y))
 
-        self.move_structure(x_translation + self.options.padding + 1, y_translation + self.options.padding + 1)
+    #     self.move_structure(x_translation + self.options.padding + 1, y_translation + self.options.padding + 1)
 
-    def _draw_text(self, text: Union[str, int], x: float, y: float, font_size: Optional[int] = None,
-                   color: str = 'black') -> str:
-        """
-        Return svg element encoding text
+    # def _draw_text(self, text: Union[str, int], x: float, y: float, font_size: Optional[int] = None,
+    #                color: str = 'black') -> str:
+    #     """
+    #     Return svg element encoding text
 
-        Parameters
-        ----------
-        text: text (str for atom types, int for ato counts) to be written in svg format
-        x: float, horizontal position (centered) of the text
-        y: float, vertical position (centered) of the text
-        font_size: Optional[int], if None, use default font size
+    #     Parameters
+    #     ----------
+    #     text: text (str for atom types, int for ato counts) to be written in svg format
+    #     x: float, horizontal position (centered) of the text
+    #     y: float, vertical position (centered) of the text
+    #     font_size: Optional[int], if None, use default font size
 
-        Returns
-        -------
-        svg_text: str, svg text
+    #     Returns
+    #     -------
+    #     svg_text: str, svg text
 
-        """
-        if font_size is None:
-            font_size = self.options.svg_font_size
-        svg_text = f"""<text x="{x}" y="{y}" text-anchor="middle" font-family="{self.options.svg_font}" fill="{color}" font-size="{font_size}"><tspan y="{y}" dy="0.35em">{text}</tspan></text>"""
+    #     """
+    #     if font_size is None:
+    #         font_size = self.options.svg_font_size
+    #     svg_text = f"""<text x="{x}" y="{y}" text-anchor="middle" font-family="{self.options.svg_font}" fill="{color}" font-size="{font_size}"><tspan y="{y}" dy="0.35em">{text}</tspan></text>"""
 
-        return svg_text
+    #     return svg_text
 
-    # TODO: Convert structures to a json dict first, then use that dict to draw in matplotlib or directly write to svg
-    def draw_svg(self, annotation: Optional[str] = None, numbered_atoms: List[Atom] = None) -> str:
-        """
-        Returns a str containing svg elements needed for drawing the entire structure
+    # # TODO: Convert structures to a json dict first, then use that dict to draw in matplotlib or directly write to svg
+    # def draw_svg(self, annotation: Optional[str] = None, numbered_atoms: List[Atom] = None) -> str:
+    #     """
+    #     Returns a str containing svg elements needed for drawing the entire structure
 
-        Parameters
-        ----------
-        annotation: str, annotation for this structure to group the svg by. Especially useful when
-            drawing multiple structures
-        numbered_atoms: list of Atom instances, atoms to be labelled with their indices in the drawing
+    #     Parameters
+    #     ----------
+    #     annotation: str, annotation for this structure to group the svg by. Especially useful when
+    #         drawing multiple structures
+    #     numbered_atoms: list of Atom instances, atoms to be labelled with their indices in the drawing
 
-        Returns
-        -------
-        svg_string: str, containing all svg elements needed for drawing the entire structure. Excludes svg header and
-            footer. To include these, call the method 'write_svg' instead.
+    #     Returns
+    #     -------
+    #     svg_string: str, containing all svg elements needed for drawing the entire structure. Excludes svg header and
+    #         footer. To include these, call the method 'write_svg' instead.
 
-        """
+    #     """
 
-        self.set_annotation_for_grouping(annotation)
+    #     self.set_annotation_for_grouping(annotation)
 
-        for ring in self.rings:
-            self.set_ring_center(ring)
+    #     for ring in self.rings:
+    #         self.set_ring_center(ring)
 
-        for bond_nr, bond in self.structure.bonds.items():
-            if bond.atom_1.draw.positioned and bond.atom_2.draw.positioned:
-                line = Line(bond.atom_1.draw.position, bond.atom_2.draw.position, bond.atom_1, bond.atom_2)
-                midpoint = line.get_midpoint()
+    #     for bond_nr, bond in self.structure.bonds.items():
+    #         if bond.atom_1.draw.positioned and bond.atom_2.draw.positioned:
+    #             line = Line(bond.atom_1.draw.position, bond.atom_2.draw.position, bond.atom_1, bond.atom_2)
+    #             midpoint = line.get_midpoint()
 
-                if bond.type == 'single':
-                    if bond in self.chiral_bonds:
+    #             if bond.type == 'single':
+    #                 if bond in self.chiral_bonds:
 
-                        orientation, chiral_center = self.chiral_bond_to_orientation[bond]
-                        self._draw_chiral_bond(orientation, chiral_center, line, midpoint)
-                    else:
-                        self._draw_halflines(line, midpoint)
-                elif bond.type in {'double', 'aromatic'}:
-                    aromatic = False
+    #                     orientation, chiral_center = self.chiral_bond_to_orientation[bond]
+    #                     self._draw_chiral_bond(orientation, chiral_center, line, midpoint)
+    #                 else:
+    #                     self._draw_halflines(line, midpoint)
+    #             elif bond.type in {'double', 'aromatic'}:
+    #                 aromatic = False
 
-                    if bond.type == 'aromatic':
-                        aromatic = True
+    #                 if bond.type == 'aromatic':
+    #                     aromatic = True
 
-                    if not self._is_terminal(bond.atom_1) and not self._is_terminal(bond.atom_2):
-                        self._draw_halflines(line, midpoint)
+    #                 if not self._is_terminal(bond.atom_1) and not self._is_terminal(bond.atom_2):
+    #                     self._draw_halflines(line, midpoint)
 
-                        common_ring_numbers = self._get_common_rings(bond.atom_1, bond.atom_2)
+    #                     common_ring_numbers = self._get_common_rings(bond.atom_1, bond.atom_2)
 
-                        # One bond is as usual, the other is drawn a little to the side
+    #                     # One bond is as usual, the other is drawn a little to the side
 
-                        if common_ring_numbers:
+    #                     if common_ring_numbers:
 
-                            common_rings = []
-                            for ring_nr in common_ring_numbers:
-                                common_rings.append(self.get_ring(ring_nr))
+    #                         common_rings = []
+    #                         for ring_nr in common_ring_numbers:
+    #                             common_rings.append(self.get_ring(ring_nr))
 
-                            common_rings.sort(key=lambda x: len(x.members))
-                            common_ring = common_rings[0]
-                            ring_centre = common_ring.center
+    #                         common_rings.sort(key=lambda x: len(x.members))
+    #                         common_ring = common_rings[0]
+    #                         ring_centre = common_ring.center
 
-                            # If the double bond is in a ring, draw the second line towards the centre of the ring
-                            second_line = line.double_line_towards_center(ring_centre, self.options.bond_spacing,
-                                                                          self.options.double_bond_length)
-                            second_line_midpoint = second_line.get_midpoint()
-                            self._draw_halflines_double(second_line, second_line_midpoint, aromatic)
+    #                         # If the double bond is in a ring, draw the second line towards the centre of the ring
+    #                         second_line = line.double_line_towards_center(ring_centre, self.options.bond_spacing,
+    #                                                                       self.options.double_bond_length)
+    #                         second_line_midpoint = second_line.get_midpoint()
+    #                         self._draw_halflines_double(second_line, second_line_midpoint, aromatic)
 
-                        else:
+    #                     else:
 
-                            bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
-                            assert bond_neighbours
+    #                         bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
+    #                         assert bond_neighbours
 
-                            vectors = [atom.draw.position for atom in bond_neighbours]
-                            # If the bond is not in a ring, draw the second line where you have more neighbouring bonds
-                            gravitational_point = Vector.get_average(vectors)
-                            second_line = line.double_line_towards_center(gravitational_point,
-                                                                          self.options.bond_spacing,
-                                                                          self.options.double_bond_length)
-                            second_line_midpoint = second_line.get_midpoint()
-                            self._draw_halflines_double(second_line, second_line_midpoint, aromatic)
+    #                         vectors = [atom.draw.position for atom in bond_neighbours]
+    #                         # If the bond is not in a ring, draw the second line where you have more neighbouring bonds
+    #                         gravitational_point = Vector.get_average(vectors)
+    #                         second_line = line.double_line_towards_center(gravitational_point,
+    #                                                                       self.options.bond_spacing,
+    #                                                                       self.options.double_bond_length)
+    #                         second_line_midpoint = second_line.get_midpoint()
+    #                         self._draw_halflines_double(second_line, second_line_midpoint, aromatic)
 
-                    else:
-                        if self._is_terminal(bond.atom_1) and self._is_terminal(bond.atom_2):
-                            dummy_1 = Vector(bond.atom_1.draw.position.x + 1, bond.atom_1.draw.position.y + 1)
-                            dummy_2 = Vector(bond.atom_1.draw.position.x - 1, bond.atom_1.draw.position.y - 1)
-                            double_bond_line_1 = line.double_line_towards_center(dummy_1,
-                                                                                 self.options.bond_spacing / 2.0,
-                                                                                 self.options.double_bond_length)
-                            double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
-                            double_bond_line_2 = line.double_line_towards_center(dummy_2,
-                                                                                 self.options.bond_spacing / 2.0,
-                                                                                 self.options.double_bond_length)
-                            double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
+    #                 else:
+    #                     if self._is_terminal(bond.atom_1) and self._is_terminal(bond.atom_2):
+    #                         dummy_1 = Vector(bond.atom_1.draw.position.x + 1, bond.atom_1.draw.position.y + 1)
+    #                         dummy_2 = Vector(bond.atom_1.draw.position.x - 1, bond.atom_1.draw.position.y - 1)
+    #                         double_bond_line_1 = line.double_line_towards_center(dummy_1,
+    #                                                                              self.options.bond_spacing / 2.0,
+    #                                                                              self.options.double_bond_length)
+    #                         double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
+    #                         double_bond_line_2 = line.double_line_towards_center(dummy_2,
+    #                                                                              self.options.bond_spacing / 2.0,
+    #                                                                              self.options.double_bond_length)
+    #                         double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
 
-                            self._draw_halflines_double(double_bond_line_1, double_bond_line_1_midpoint)
-                            self._draw_halflines_double(double_bond_line_2, double_bond_line_2_midpoint, aromatic)
+    #                         self._draw_halflines_double(double_bond_line_1, double_bond_line_1_midpoint)
+    #                         self._draw_halflines_double(double_bond_line_2, double_bond_line_2_midpoint, aromatic)
 
-                        else:
+    #                     else:
 
-                            if self._is_terminal(bond.atom_1):
-                                terminal_atom = bond.atom_1
-                                branched_atom = bond.atom_2
-                            else:
-                                terminal_atom = bond.atom_2
-                                branched_atom = bond.atom_1
+    #                         if self._is_terminal(bond.atom_1):
+    #                             terminal_atom = bond.atom_1
+    #                             branched_atom = bond.atom_2
+    #                         else:
+    #                             terminal_atom = bond.atom_2
+    #                             branched_atom = bond.atom_1
 
-                            if len(branched_atom.drawn_neighbours) >= 3:
-                                closest_two = self.get_sorted_distances_from_list(terminal_atom,
-                                                                                  branched_atom.drawn_neighbours)
-                                closest_atom_1 = closest_two[0][1]
-                                closest_atom_2 = closest_two[1][1]
+    #                         if len(branched_atom.drawn_neighbours) >= 3:
+    #                             closest_two = self.get_sorted_distances_from_list(terminal_atom,
+    #                                                                               branched_atom.drawn_neighbours)
+    #                             closest_atom_1 = closest_two[0][1]
+    #                             closest_atom_2 = closest_two[1][1]
 
-                                line = Line(terminal_atom.draw.position, branched_atom.draw.position, terminal_atom,
-                                            branched_atom)
+    #                             line = Line(terminal_atom.draw.position, branched_atom.draw.position, terminal_atom,
+    #                                         branched_atom)
 
-                                double_bond_line_1, double_bond_line_2 = line.get_perpendicular_lines(
-                                    self.options.bond_spacing / 2.0)
-                                terminal_atom_pos_1 = double_bond_line_1.get_atom_coords(terminal_atom)
-                                terminal_atom_pos_2 = double_bond_line_2.get_atom_coords(terminal_atom)
+    #                             double_bond_line_1, double_bond_line_2 = line.get_perpendicular_lines(
+    #                                 self.options.bond_spacing / 2.0)
+    #                             terminal_atom_pos_1 = double_bond_line_1.get_atom_coords(terminal_atom)
+    #                             terminal_atom_pos_2 = double_bond_line_2.get_atom_coords(terminal_atom)
 
-                                closest_atom_to_pos_1 = terminal_atom_pos_1.get_closest_atom(closest_atom_1,
-                                                                                             closest_atom_2)
-                                closest_atom_to_pos_2 = terminal_atom_pos_2.get_closest_atom(closest_atom_1,
-                                                                                             closest_atom_2)
+    #                             closest_atom_to_pos_1 = terminal_atom_pos_1.get_closest_atom(closest_atom_1,
+    #                                                                                          closest_atom_2)
+    #                             closest_atom_to_pos_2 = terminal_atom_pos_2.get_closest_atom(closest_atom_1,
+    #                                                                                          closest_atom_2)
 
-                                bond_1_line = Line(branched_atom.draw.position, closest_atom_to_pos_1.draw.position,
-                                                   branched_atom, closest_atom_to_pos_1)
-                                bond_2_line = Line(branched_atom.draw.position, closest_atom_to_pos_2.draw.position,
-                                                   branched_atom, closest_atom_to_pos_2)
+    #                             bond_1_line = Line(branched_atom.draw.position, closest_atom_to_pos_1.draw.position,
+    #                                                branched_atom, closest_atom_to_pos_1)
+    #                             bond_2_line = Line(branched_atom.draw.position, closest_atom_to_pos_2.draw.position,
+    #                                                branched_atom, closest_atom_to_pos_2)
 
-                                double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
-                                double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
+    #                             double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
+    #                             double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
 
-                                intersection_1 = double_bond_line_1.find_intersection(bond_1_line)
-                                intersection_2 = double_bond_line_2.find_intersection(bond_2_line)
+    #                             intersection_1 = double_bond_line_1.find_intersection(bond_1_line)
+    #                             intersection_2 = double_bond_line_2.find_intersection(bond_2_line)
 
-                                if terminal_atom.draw.position.x > branched_atom.draw.position.x:
-                                    # check for parallel lines
-                                    if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
-                                        double_bond_line_1.point_1 = intersection_1
-                                    if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
-                                        double_bond_line_2.point_1 = intersection_2
+    #                             if terminal_atom.draw.position.x > branched_atom.draw.position.x:
+    #                                 # check for parallel lines
+    #                                 if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
+    #                                     double_bond_line_1.point_1 = intersection_1
+    #                                 if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
+    #                                     double_bond_line_2.point_1 = intersection_2
 
-                                else:
-                                    # check for parallel lines
-                                    if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
-                                        double_bond_line_1.point_2 = intersection_1
-                                    if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
-                                        double_bond_line_2.point_2 = intersection_2
+    #                             else:
+    #                                 # check for parallel lines
+    #                                 if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
+    #                                     double_bond_line_1.point_2 = intersection_1
+    #                                 if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
+    #                                     double_bond_line_2.point_2 = intersection_2
 
-                                self._draw_halflines(double_bond_line_1, double_bond_line_1_midpoint)
-                                self._draw_halflines(double_bond_line_2, double_bond_line_2_midpoint, aromatic)
+    #                             self._draw_halflines(double_bond_line_1, double_bond_line_1_midpoint)
+    #                             self._draw_halflines(double_bond_line_2, double_bond_line_2_midpoint, aromatic)
 
-                            else:
-                                self._draw_halflines(line, midpoint)
+    #                         else:
+    #                             self._draw_halflines(line, midpoint)
 
-                                bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
-                                if bond_neighbours:
-                                    vectors = [atom.draw.position for atom in bond_neighbours]
-                                    gravitational_point = Vector.get_average(vectors)
-                                    second_line = line.get_parallel_line(gravitational_point,
-                                                                         self.options.bond_spacing)
-                                    second_line_midpoint = second_line.get_midpoint()
-                                    self._draw_halflines(second_line, second_line_midpoint, aromatic)
-                                else:
-                                    print("Shouldn't happen!")
+    #                             bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
+    #                             if bond_neighbours:
+    #                                 vectors = [atom.draw.position for atom in bond_neighbours]
+    #                                 gravitational_point = Vector.get_average(vectors)
+    #                                 second_line = line.get_parallel_line(gravitational_point,
+    #                                                                      self.options.bond_spacing)
+    #                                 second_line_midpoint = second_line.get_midpoint()
+    #                                 self._draw_halflines(second_line, second_line_midpoint, aromatic)
+    #                             else:
+    #                                 print("Shouldn't happen!")
 
-                elif bond.type == 'triple':
-                    self._draw_halflines(line, midpoint)
-                    line_1, line_2 = line.get_parallel_lines(self.options.bond_spacing)
-                    line_1_midpoint = line_1.get_midpoint()
-                    line_2_midpoint = line_2.get_midpoint()
-                    self._draw_halflines(line_1, line_1_midpoint)
-                    self._draw_halflines(line_2, line_2_midpoint)
+    #             elif bond.type == 'triple':
+    #                 self._draw_halflines(line, midpoint)
+    #                 line_1, line_2 = line.get_parallel_lines(self.options.bond_spacing)
+    #                 line_1_midpoint = line_1.get_midpoint()
+    #                 line_2_midpoint = line_2.get_midpoint()
+    #                 self._draw_halflines(line_1, line_1_midpoint)
+    #                 self._draw_halflines(line_2, line_2_midpoint)
 
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                svg_text = ''
-                svg_h_text = ''
-                svg_charge_text = ''
-                svg_h_count_text = ''
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             svg_text = ''
+    #             svg_h_text = ''
+    #             svg_charge_text = ''
+    #             svg_h_count_text = ''
 
-                if atom.type != 'C' or atom.draw.draw_explicit or atom.charge:
-                    if atom.type == 'C' and not atom.charge:
-                        svg_text = self._draw_text('.', atom.draw.position.x, atom.draw.position.y - 2,
-                                                   color=atom.draw.colour)
-                    else:
-                        svg_text = self._draw_text(atom.type, atom.draw.position.x, atom.draw.position.y,
-                                                   color=atom.draw.colour)
+    #             if atom.type != 'C' or atom.draw.draw_explicit or atom.charge:
+    #                 if atom.type == 'C' and not atom.charge:
+    #                     svg_text = self._draw_text('.', atom.draw.position.x, atom.draw.position.y - 2,
+    #                                                color=atom.draw.colour)
+    #                 else:
+    #                     svg_text = self._draw_text(atom.type, atom.draw.position.x, atom.draw.position.y,
+    #                                                color=atom.draw.colour)
 
-                        # TODO: Make this possible in svg writing
-                        # text = self.set_r_group_indices_subscript(atom.type)
+    #                     # TODO: Make this possible in svg writing
+    #                     # text = self.set_r_group_indices_subscript(atom.type)
 
-                orientation = self._get_hydrogen_text_orientation(atom)
+    #             orientation = self._get_hydrogen_text_orientation(atom)
 
-                # Swap up-down orientation due to swapped svg coordinate system
-                if orientation == 'H_below_atom':
-                    orientation = 'H_above_atom'
-                elif orientation == 'H_above_atom':
-                    orientation = 'H_below_atom'
+    #             # Swap up-down orientation due to swapped svg coordinate system
+    #             if orientation == 'H_below_atom':
+    #                 orientation = 'H_above_atom'
+    #             elif orientation == 'H_above_atom':
+    #                 orientation = 'H_below_atom'
 
-                if atom.type != 'C' or atom.draw.draw_explicit or atom.charge:
+    #             if atom.type != 'C' or atom.draw.draw_explicit or atom.charge:
 
-                    hydrogen_count = 0
+    #                 hydrogen_count = 0
 
-                    for neighbour in atom.neighbours:
-                        if neighbour.type == 'H' and not neighbour.draw.is_drawn:
-                            hydrogen_count += 1
+    #                 for neighbour in atom.neighbours:
+    #                     if neighbour.type == 'H' and not neighbour.draw.is_drawn:
+    #                         hydrogen_count += 1
 
-                    h_x = atom.draw.position.x
-                    h_y = atom.draw.position.y
-                    h_subscript_x = atom.draw.position.x
-                    h_subscript_y = atom.draw.position.y + 3
-                    charge_x = atom.draw.position.x + 6
-                    charge_y = atom.draw.position.y - 3
+    #                 h_x = atom.draw.position.x
+    #                 h_y = atom.draw.position.y
+    #                 h_subscript_x = atom.draw.position.x
+    #                 h_subscript_y = atom.draw.position.y + 3
+    #                 charge_x = atom.draw.position.x + 6
+    #                 charge_y = atom.draw.position.y - 3
 
-                    if orientation == 'H_below_atom':
-                        h_y = atom.draw.position.y + 7
-                        h_subscript_x += 2
-                        h_subscript_y += 10
-                    elif orientation == 'H_above_atom':
-                        h_y = atom.draw.position.y - 7
-                        h_subscript_x += 2
-                        h_subscript_y -= 4
-                    elif orientation == 'H_before_atom':
-                        if hydrogen_count > 1:
-                            h_x -= 10
-                            h_subscript_x -= 5
-                        elif hydrogen_count == 1:
-                            h_x -= 6
-                    else:
-                        h_x += len(atom.type) * 6
-                        h_subscript_x += len(atom.type) * 6 + 5
+    #                 if orientation == 'H_below_atom':
+    #                     h_y = atom.draw.position.y + 7
+    #                     h_subscript_x += 2
+    #                     h_subscript_y += 10
+    #                 elif orientation == 'H_above_atom':
+    #                     h_y = atom.draw.position.y - 7
+    #                     h_subscript_x += 2
+    #                     h_subscript_y -= 4
+    #                 elif orientation == 'H_before_atom':
+    #                     if hydrogen_count > 1:
+    #                         h_x -= 10
+    #                         h_subscript_x -= 5
+    #                     elif hydrogen_count == 1:
+    #                         h_x -= 6
+    #                 else:
+    #                     h_x += len(atom.type) * 6
+    #                     h_subscript_x += len(atom.type) * 6 + 5
 
-                    if abs(atom.charge):
-                        if hydrogen_count and orientation == 'H_after_atom':
-                            if hydrogen_count > 1:
-                                charge_x += len(atom.type) * 6 + 7
-                            else:
-                                charge_x += len(atom.type) * 6 + 2
+    #                 if abs(atom.charge):
+    #                     if hydrogen_count and orientation == 'H_after_atom':
+    #                         if hydrogen_count > 1:
+    #                             charge_x += len(atom.type) * 6 + 7
+    #                         else:
+    #                             charge_x += len(atom.type) * 6 + 2
 
-                    h_pos = Vector(h_x, h_y)
-                    h_subscript_pos = Vector(h_subscript_x, h_subscript_y)
-                    charge_pos = Vector(charge_x, charge_y)
+    #                 h_pos = Vector(h_x, h_y)
+    #                 h_subscript_pos = Vector(h_subscript_x, h_subscript_y)
+    #                 charge_pos = Vector(charge_x, charge_y)
 
-                    if hydrogen_count:
-                        svg_h_text = self._draw_text('H', h_pos.x, h_pos.y,
-                                                     color=atom.draw.colour)
-                        if hydrogen_count > 1:
-                            svg_h_count_text = self._draw_text(hydrogen_count, h_subscript_pos.x, h_subscript_pos.y,
-                                                               font_size=self.options.svg_font_size_small,
-                                                               color=atom.draw.colour)
-                    if atom.charge:
-                        if atom.charge > 0:
-                            charge_symbol = '+'
-                        else:
-                            charge_symbol = '-'
+    #                 if hydrogen_count:
+    #                     svg_h_text = self._draw_text('H', h_pos.x, h_pos.y,
+    #                                                  color=atom.draw.colour)
+    #                     if hydrogen_count > 1:
+    #                         svg_h_count_text = self._draw_text(hydrogen_count, h_subscript_pos.x, h_subscript_pos.y,
+    #                                                            font_size=self.options.svg_font_size_small,
+    #                                                            color=atom.draw.colour)
+    #                 if atom.charge:
+    #                     if atom.charge > 0:
+    #                         charge_symbol = '+'
+    #                     else:
+    #                         charge_symbol = '-'
 
-                        if abs(atom.charge) > 1:
-                            charge_text = f"{abs(atom.charge)}{charge_symbol}"
-                        else:
-                            charge_text = charge_symbol
+    #                     if abs(atom.charge) > 1:
+    #                         charge_text = f"{abs(atom.charge)}{charge_symbol}"
+    #                     else:
+    #                         charge_text = charge_symbol
 
-                        svg_charge_text = self._draw_text(charge_text, charge_pos.x, charge_pos.y,
-                                                          font_size=self.options.svg_font_size_small,
-                                                          color=atom.draw.colour)
+    #                     svg_charge_text = self._draw_text(charge_text, charge_pos.x, charge_pos.y,
+    #                                                       font_size=self.options.svg_font_size_small,
+    #                                                       color=atom.draw.colour)
 
-                if svg_text or svg_h_text or svg_charge_text or svg_h_count_text:
-                    if self.structure_id:
-                        text_group = f'<g id="atom_{atom}_{self.structure_id}_text">\n'
-                    else:
-                        text_group = f'<g id="atom_{atom}_text">\n'
-                    if svg_text:
-                        text_group += svg_text
-                        text_group += '\n'
-                    if svg_h_text:
-                        text_group += svg_h_text
-                        text_group += '\n'
-                    if svg_charge_text:
-                        text_group += svg_charge_text
-                        text_group += '\n'
-                    if svg_h_count_text:
-                        text_group += svg_h_count_text
-                        text_group += '\n'
-                    text_group += '</g>'
-                    self._add_svg_element(text_group, atom)
+    #             if svg_text or svg_h_text or svg_charge_text or svg_h_count_text:
+    #                 if self.structure_id:
+    #                     text_group = f'<g id="atom_{atom}_{self.structure_id}_text">\n'
+    #                 else:
+    #                     text_group = f'<g id="atom_{atom}_text">\n'
+    #                 if svg_text:
+    #                     text_group += svg_text
+    #                     text_group += '\n'
+    #                 if svg_h_text:
+    #                     text_group += svg_h_text
+    #                     text_group += '\n'
+    #                 if svg_charge_text:
+    #                     text_group += svg_charge_text
+    #                     text_group += '\n'
+    #                 if svg_h_count_text:
+    #                     text_group += svg_h_count_text
+    #                     text_group += '\n'
+    #                 text_group += '</g>'
+    #                 self._add_svg_element(text_group, atom)
                     
-        if numbered_atoms:
-            self.show_atom_numbers(numbered_atoms)
+    #     if numbered_atoms:
+    #         self.show_atom_numbers(numbered_atoms)
 
-        svg = self._assemble_svg()
-        return svg
+    #     svg = self._assemble_svg()
+    #     return svg
 
-    def write_svg(self, out_file: str, annotation: Optional[str] = None, numbered_atoms: List[Atom] = None) -> None:
-        """
-        Write svg of structure to an output file
+    # def write_svg(self, out_file: str, annotation: Optional[str] = None, numbered_atoms: List[Atom] = None) -> None:
+    #     """
+    #     Write svg of structure to an output file
 
-        Parameters
-        ----------
-        out_file: str, path to output file
-        annotation: str, annotation for the structure
-        numbered_atoms: list of Atom instances to be labelled with their indices in the drawing
-        """
+    #     Parameters
+    #     ----------
+    #     out_file: str, path to output file
+    #     annotation: str, annotation for the structure
+    #     numbered_atoms: list of Atom instances to be labelled with their indices in the drawing
+    #     """
 
-        self.flip_y_axis()
-        self.move_to_positive_coords()
-        self.convert_to_int()
+    #     self.flip_y_axis()
+    #     self.move_to_positive_coords()
+    #     self.convert_to_int()
 
-        min_x = 100000000
-        max_x = -100000000
-        min_y = 100000000
-        max_y = -100000000
+    #     min_x = 100000000
+    #     max_x = -100000000
+    #     min_y = 100000000
+    #     max_y = -100000000
 
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                if atom.draw.position.x < min_x:
-                    min_x = atom.draw.position.x
-                if atom.draw.position.y < min_y:
-                    min_y = atom.draw.position.y
-                if atom.draw.position.x > max_x:
-                    max_x = atom.draw.position.x
-                if atom.draw.position.y > max_y:
-                    max_y = atom.draw.position.y
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             if atom.draw.position.x < min_x:
+    #                 min_x = atom.draw.position.x
+    #             if atom.draw.position.y < min_y:
+    #                 min_y = atom.draw.position.y
+    #             if atom.draw.position.x > max_x:
+    #                 max_x = atom.draw.position.x
+    #             if atom.draw.position.y > max_y:
+    #                 max_y = atom.draw.position.y
 
-        width = max_x - min_x + 2 * self.options.padding
-        height = max_y - min_y + 2 * self.options.padding
+    #     width = max_x - min_x + 2 * self.options.padding
+    #     height = max_y - min_y + 2 * self.options.padding
 
-        x1 = max(0, min_x - self.options.padding)
-        y1 = max(0, min_y - self.options.padding)
-        x2 = max_x + self.options.padding
-        y2 = max_y + self.options.padding
+    #     x1 = max(0, min_x - self.options.padding)
+    #     y1 = max(0, min_y - self.options.padding)
+    #     x2 = max_x + self.options.padding
+    #     y2 = max_y + self.options.padding
 
-        svg_string = f"""<svg width="{width}" height="{height}" viewBox="{x1} {y1} {x2} {y2}" xmlns="http://www.w3.org/2000/svg">"""
-        svg_string += self.svg_style
-        svg_string += self.draw_svg(annotation=annotation, numbered_atoms=numbered_atoms)
-        svg_string += "</svg>"
+    #     svg_string = f"""<svg width="{width}" height="{height}" viewBox="{x1} {y1} {x2} {y2}" xmlns="http://www.w3.org/2000/svg">"""
+    #     svg_string += self.svg_style
+    #     svg_string += self.draw_svg(annotation=annotation, numbered_atoms=numbered_atoms)
+    #     svg_string += "</svg>"
 
-        with open(out_file, 'w') as out:
-            out.write(svg_string)
+    #     with open(out_file, 'w') as out:
+    #         out.write(svg_string)
 
-    def _assemble_svg(self) -> str:
-        """
-        Assemble and return string containing svg elements from dictionary of svg elements
+    # def _assemble_svg(self) -> str:
+    #     """
+    #     Assemble and return string containing svg elements from dictionary of svg elements
 
-        Returns
-        -------
-        svg_string: str containing all svg elements required for visualising the structure
+    #     Returns
+    #     -------
+    #     svg_string: str containing all svg elements required for visualising the structure
 
-        """
+    #     """
 
-        svg_string = ''
+    #     svg_string = ''
 
-        for svg_group, atom_to_elements in self.svg_groups.items():
-            svg_string += f"""<g id="{svg_group}">\n"""
+    #     for svg_group, atom_to_elements in self.svg_groups.items():
+    #         svg_string += f"""<g id="{svg_group}">\n"""
 
-            for atom, elements in atom_to_elements.items():
-                svg_string += f"""<g id="{atom}">\n"""
+    #         for atom, elements in atom_to_elements.items():
+    #             svg_string += f"""<g id="{atom}">\n"""
 
-                for element in elements:
-                    svg_string += element
-                    svg_string += '\n'
-                svg_string += "</g>\n"
-            svg_string += "</g>\n"
+    #             for element in elements:
+    #                 svg_string += element
+    #                 svg_string += '\n'
+    #             svg_string += "</g>\n"
+    #         svg_string += "</g>\n"
 
-        return svg_string
+    #     return svg_string
 
     # TODO: This should be refactored. Better to always only do the positioning, and then specifically call 'draw'
     def draw(self, coords_only: bool = False) -> None:
@@ -1652,256 +1652,256 @@ class Drawer:
 
         return None
 
-    @staticmethod
-    def _plot_chiral_bond_front(polygon: List[Vector], ax: Axes, color: str = 'black') -> None:
-        """
-        Plot a forward-facing chiral bond, visualised as a solid-coloured wedge, in matplotlib
+    # @staticmethod
+    # def _plot_chiral_bond_front(polygon: List[Vector], ax: Axes, color: str = 'black') -> None:
+    #     """
+    #     Plot a forward-facing chiral bond, visualised as a solid-coloured wedge, in matplotlib
 
-        Parameters
-        ----------
-        polygon: list of Vector instances, with each vector one corner of the wedge.
-            Must have length 3 for the first half of the wedge, and length 4 for the second half of the wedge
-        ax: matplotlib Axes instance to plot in
-        color: str, denoting colour of wedge. Default: black
-        """
-        x: List[float] = []
-        y: List[float] = []
-        for point in polygon:
-            x.append(point.x)
-            y.append(point.y)
+    #     Parameters
+    #     ----------
+    #     polygon: list of Vector instances, with each vector one corner of the wedge.
+    #         Must have length 3 for the first half of the wedge, and length 4 for the second half of the wedge
+    #     ax: matplotlib Axes instance to plot in
+    #     color: str, denoting colour of wedge. Default: black
+    #     """
+    #     x: List[float] = []
+    #     y: List[float] = []
+    #     for point in polygon:
+    #         x.append(point.x)
+    #         y.append(point.y)
 
-        ax.fill(x, y, color=color)
+    #     ax.fill(x, y, color=color)
 
-    def _plot_chiral_bond_back(self, lines: List[Line], ax: Axes, color: str = 'black') -> None:
-        """
-        Plot a backward-facing chiral bond, visualised as a series of thin lines, in matplotlib
+    # def _plot_chiral_bond_back(self, lines: List[Line], ax: Axes, color: str = 'black') -> None:
+    #     """
+    #     Plot a backward-facing chiral bond, visualised as a series of thin lines, in matplotlib
 
-        Parameters
-        ----------
-        lines: list of Line instances, with each line one of the lines to be drawn.
-        ax: matplotlib Axes instance to plot in
-        color: str, denoting colour of wedge. Default: black
-        """
-        for line in lines:
-            self._plot_line(line, ax, color=color)
+    #     Parameters
+    #     ----------
+    #     lines: list of Line instances, with each line one of the lines to be drawn.
+    #     ax: matplotlib Axes instance to plot in
+    #     color: str, denoting colour of wedge. Default: black
+    #     """
+    #     for line in lines:
+    #         self._plot_line(line, ax, color=color)
 
-    def _plot_chiral_bond(self, orientation: str, chiral_center: Atom, line: Line, ax: Axes, midpoint: Vector) -> None:
-        """
-        Plot a chiral bond in matplotlib
+    # def _plot_chiral_bond(self, orientation: str, chiral_center: Atom, line: Line, ax: Axes, midpoint: Vector) -> None:
+    #     """
+    #     Plot a chiral bond in matplotlib
 
-        Parameters
-        ----------
-        orientation: str, 'front' for a forward-facing chiral bond, 'back' for a backward-facing one
-        chiral_center: Atom instance, must be a chiral center
-        line: Line instance, line denoting the position of a bond
-        ax: matplotlib Axes instance
-        midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
-            such that each bond half can be coloured separately
-        """
-        halflines = line.divide_in_two(midpoint)
-        for halfline in halflines:
-            truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
-            if orientation == 'front':
-                bond_wedge = truncated_line.get_bond_wedge_front(self.options.chiral_bond_width, chiral_center)
-                self._plot_chiral_bond_front(bond_wedge, ax, color=halfline.atom.draw.colour)
-            else:
-                bond_lines = halfline.get_bond_wedge_back(self.options.chiral_bond_width, chiral_center)
-                self._plot_chiral_bond_back(bond_lines, ax, color=halfline.atom.draw.colour)
+    #     Parameters
+    #     ----------
+    #     orientation: str, 'front' for a forward-facing chiral bond, 'back' for a backward-facing one
+    #     chiral_center: Atom instance, must be a chiral center
+    #     line: Line instance, line denoting the position of a bond
+    #     ax: matplotlib Axes instance
+    #     midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
+    #         such that each bond half can be coloured separately
+    #     """
+    #     halflines = line.divide_in_two(midpoint)
+    #     for halfline in halflines:
+    #         truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
+    #         if orientation == 'front':
+    #             bond_wedge = truncated_line.get_bond_wedge_front(self.options.chiral_bond_width, chiral_center)
+    #             self._plot_chiral_bond_front(bond_wedge, ax, color=halfline.atom.draw.colour)
+    #         else:
+    #             bond_lines = halfline.get_bond_wedge_back(self.options.chiral_bond_width, chiral_center)
+    #             self._plot_chiral_bond_back(bond_lines, ax, color=halfline.atom.draw.colour)
 
-    @staticmethod
-    def _draw_chiral_bond_front(polygon: List[Vector], color: str = 'black') -> str:
-        """
-        Create an SVG element for half of a forward-facing chiral bond, visualised as a solid-coloured wedge
+    # @staticmethod
+    # def _draw_chiral_bond_front(polygon: List[Vector], color: str = 'black') -> str:
+    #     """
+    #     Create an SVG element for half of a forward-facing chiral bond, visualised as a solid-coloured wedge
 
-        Parameters
-        ----------
-        polygon: list of Vector instances, with each vector one corner of the wedge.
-            Must have length 3 for the first half of the wedge, and length 4 for the second half of the wedge
-        color: str, denoting colour of wedge. Default: black
-        """
-        svg_string = '<polygon points="'
-        polygon_strings = []
-        for point in polygon:
-            polygon_strings.append(f"{point.x},{point.y}")
-        polygon_string = ' '.join(polygon_strings)
-        svg_string += polygon_string + '"'
-        if color != 'black':
-            svg_string += f' fill="{color}"'
-        svg_string += ' />'
+    #     Parameters
+    #     ----------
+    #     polygon: list of Vector instances, with each vector one corner of the wedge.
+    #         Must have length 3 for the first half of the wedge, and length 4 for the second half of the wedge
+    #     color: str, denoting colour of wedge. Default: black
+    #     """
+    #     svg_string = '<polygon points="'
+    #     polygon_strings = []
+    #     for point in polygon:
+    #         polygon_strings.append(f"{point.x},{point.y}")
+    #     polygon_string = ' '.join(polygon_strings)
+    #     svg_string += polygon_string + '"'
+    #     if color != 'black':
+    #         svg_string += f' fill="{color}"'
+    #     svg_string += ' />'
 
-        return svg_string
+    #     return svg_string
 
-    @staticmethod
-    def _draw_chiral_bond_back(lines: List[Line], color: str = 'black') -> str:
-        """
-        Create an SVG element for half of a backward-facing chiral bond, visualised as a series of thin lines
+    # @staticmethod
+    # def _draw_chiral_bond_back(lines: List[Line], color: str = 'black') -> str:
+    #     """
+    #     Create an SVG element for half of a backward-facing chiral bond, visualised as a series of thin lines
 
-        Parameters
-        ----------
-        lines: list of Line instances, with each line one of the lines to be drawn.
-        color: str, denoting colour of wedge. Default: black
-        """
-        svg_string = f'<g id="chiral-bond-back" stroke="{color}" stroke-width="{1}">\n  '
-        line_strings = []
-        for line in lines:
-            line_string = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" />'
-            line_strings.append(line_string)
+    #     Parameters
+    #     ----------
+    #     lines: list of Line instances, with each line one of the lines to be drawn.
+    #     color: str, denoting colour of wedge. Default: black
+    #     """
+    #     svg_string = f'<g id="chiral-bond-back" stroke="{color}" stroke-width="{1}">\n  '
+    #     line_strings = []
+    #     for line in lines:
+    #         line_string = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" />'
+    #         line_strings.append(line_string)
 
-        line_string = '\n  '.join(line_strings)
-        svg_string += line_string
-        svg_string += '\n</g>'
+    #     line_string = '\n  '.join(line_strings)
+    #     svg_string += line_string
+    #     svg_string += '\n</g>'
 
-        return svg_string
+    #     return svg_string
 
-    def set_structure_id(self, structure_id: str) -> None:
-        """
-        Set a structure identifier by which SVG elements will be grouped
+    # def set_structure_id(self, structure_id: str) -> None:
+    #     """
+    #     Set a structure identifier by which SVG elements will be grouped
 
-        Parameters
-        ----------
-        structure_id: str, structure identifier
+    #     Parameters
+    #     ----------
+    #     structure_id: str, structure identifier
 
-        """
-        self.structure_id = structure_id
+    #     """
+    #     self.structure_id = structure_id
 
-    def _add_svg_element(self, svg_element: str, atom: Atom) -> None:
-        """
-        Store an SVG element representing a half-bond or atom within an atom group
+    # def _add_svg_element(self, svg_element: str, atom: Atom) -> None:
+    #     """
+    #     Store an SVG element representing a half-bond or atom within an atom group
 
-        Parameters
-        ----------
-        svg_element: str, pre-computed SVG element
-        atom: Atom instance, associated with the SVG element
-        """
+    #     Parameters
+    #     ----------
+    #     svg_element: str, pre-computed SVG element
+    #     atom: Atom instance, associated with the SVG element
+    #     """
 
-        if self.annotation is not None and self.annotation in atom.annotations.annotations:
-            annotation_value = atom.annotations.get_annotation(self.annotation)
-        else:
-            annotation_value = 'unlabeled'
+    #     if self.annotation is not None and self.annotation in atom.annotations.annotations:
+    #         annotation_value = atom.annotations.get_annotation(self.annotation)
+    #     else:
+    #         annotation_value = 'unlabeled'
 
-        if self.structure_id:
-            annotation_value = f"{annotation_value}_{self.structure_id}"
+    #     if self.structure_id:
+    #         annotation_value = f"{annotation_value}_{self.structure_id}"
 
-        if annotation_value not in self.svg_groups:
-            self.svg_groups[annotation_value] = {}
+    #     if annotation_value not in self.svg_groups:
+    #         self.svg_groups[annotation_value] = {}
 
-        atom_label = f'atom_{atom}'
+    #     atom_label = f'atom_{atom}'
 
-        if self.structure_id:
-            atom_label = f'atom_{atom}_{self.structure_id}'
+    #     if self.structure_id:
+    #         atom_label = f'atom_{atom}_{self.structure_id}'
 
-        if atom_label not in self.svg_groups[annotation_value]:
-            self.svg_groups[annotation_value][atom_label] = []
+    #     if atom_label not in self.svg_groups[annotation_value]:
+    #         self.svg_groups[annotation_value][atom_label] = []
 
-        self.svg_groups[annotation_value][atom_label].append(svg_element)
+    #     self.svg_groups[annotation_value][atom_label].append(svg_element)
 
-    def _draw_chiral_bond(self, orientation: str, chiral_center: Atom, line: Line, midpoint: Vector) -> None:
-        """
-        Add an SVG element representing a chiral bond to the drawing
+    # def _draw_chiral_bond(self, orientation: str, chiral_center: Atom, line: Line, midpoint: Vector) -> None:
+    #     """
+    #     Add an SVG element representing a chiral bond to the drawing
 
-        Parameters
-        ----------
-        orientation: str, 'front' for a forward-facing chiral bond, 'back' for a backward-facing one
-        chiral_center: Atom instance, must be a chiral center
-        line: Line instance, line denoting the position of a bond
-        midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
-            such that each bond half can be coloured separately
-        """
-        halflines = line.divide_in_two(midpoint)
-        for halfline in halflines:
-            truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
-            if orientation == 'front':
-                bond_wedge = truncated_line.get_bond_wedge_front(self.options.chiral_bond_width, chiral_center)
-                svg_polygon = self._draw_chiral_bond_front(bond_wedge, color=halfline.atom.draw.colour)
-                self._add_svg_element(svg_polygon, halfline.atom)
+    #     Parameters
+    #     ----------
+    #     orientation: str, 'front' for a forward-facing chiral bond, 'back' for a backward-facing one
+    #     chiral_center: Atom instance, must be a chiral center
+    #     line: Line instance, line denoting the position of a bond
+    #     midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
+    #         such that each bond half can be coloured separately
+    #     """
+    #     halflines = line.divide_in_two(midpoint)
+    #     for halfline in halflines:
+    #         truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
+    #         if orientation == 'front':
+    #             bond_wedge = truncated_line.get_bond_wedge_front(self.options.chiral_bond_width, chiral_center)
+    #             svg_polygon = self._draw_chiral_bond_front(bond_wedge, color=halfline.atom.draw.colour)
+    #             self._add_svg_element(svg_polygon, halfline.atom)
 
-            elif orientation == 'back':
-                bond_lines = halfline.get_bond_wedge_back(self.options.chiral_bond_width, chiral_center)
-                svg_lines = self._draw_chiral_bond_back(bond_lines, color=halfline.atom.draw.colour)
-                self._add_svg_element(svg_lines, halfline.atom)
-            else:
-                raise ValueError(f"Unrecognised chiral bond orientation: {orientation}.")
+    #         elif orientation == 'back':
+    #             bond_lines = halfline.get_bond_wedge_back(self.options.chiral_bond_width, chiral_center)
+    #             svg_lines = self._draw_chiral_bond_back(bond_lines, color=halfline.atom.draw.colour)
+    #             self._add_svg_element(svg_lines, halfline.atom)
+    #         else:
+    #             raise ValueError(f"Unrecognised chiral bond orientation: {orientation}.")
 
-    def _draw_halflines(self, line: Line, midpoint: Vector, aromatic=False) -> None:
-        """
-        Add an SVG element representing one line of a bond to the drawing
+    # def _draw_halflines(self, line: Line, midpoint: Vector, aromatic=False) -> None:
+    #     """
+    #     Add an SVG element representing one line of a bond to the drawing
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of one line of a bond
-        midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
-            such that each bond half can be coloured separately
-        aromatic: bool, if True, draw a dashed line; if False, draw a solid line
-        """
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of one line of a bond
+    #     midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
+    #         such that each bond half can be coloured separately
+    #     aromatic: bool, if True, draw a dashed line; if False, draw a solid line
+    #     """
 
-        halflines = line.divide_in_two(midpoint)
-        for halfline in halflines:
-            truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
-            if not aromatic:
-                svg_line = self._draw_line(truncated_line, color=halfline.atom.draw.colour)
-            else:
-                svg_line = self._draw_dashed_line(truncated_line, color=halfline.atom.draw.colour)
-            self._add_svg_element(svg_line, halfline.atom)
+    #     halflines = line.divide_in_two(midpoint)
+    #     for halfline in halflines:
+    #         truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
+    #         if not aromatic:
+    #             svg_line = self._draw_line(truncated_line, color=halfline.atom.draw.colour)
+    #         else:
+    #             svg_line = self._draw_dashed_line(truncated_line, color=halfline.atom.draw.colour)
+    #         self._add_svg_element(svg_line, halfline.atom)
 
-    # TODO: Can we integrate this function with the one above?
-    def _draw_halflines_double(self, line: Line, midpoint: Vector, aromatic=False) -> None:
-        """
-        Add an SVG element representing one line of a pre-truncated double bond to the drawing
+    # # TODO: Can we integrate this function with the one above?
+    # def _draw_halflines_double(self, line: Line, midpoint: Vector, aromatic=False) -> None:
+    #     """
+    #     Add an SVG element representing one line of a pre-truncated double bond to the drawing
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of one line of a bond. This line has been pre-truncated
-        midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
-            such that each bond half can be coloured separately
-        aromatic: bool, if True, draw a dashed line; if False, draw a solid line
-        """
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of one line of a bond. This line has been pre-truncated
+    #     midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
+    #         such that each bond half can be coloured separately
+    #     aromatic: bool, if True, draw a dashed line; if False, draw a solid line
+    #     """
 
-        halflines = line.divide_in_two(midpoint)
-        for halfline in halflines:
-            if not aromatic:
-                svg_line = self._draw_line(halfline, color=halfline.atom.draw.colour)
-            else:
-                svg_line = self._draw_dashed_line(halfline, color=halfline.atom.draw.colour)
-            self._add_svg_element(svg_line, halfline.atom)
+    #     halflines = line.divide_in_two(midpoint)
+    #     for halfline in halflines:
+    #         if not aromatic:
+    #             svg_line = self._draw_line(halfline, color=halfline.atom.draw.colour)
+    #         else:
+    #             svg_line = self._draw_dashed_line(halfline, color=halfline.atom.draw.colour)
+    #         self._add_svg_element(svg_line, halfline.atom)
 
-    @staticmethod
-    def _draw_dashed_line(line: Line, color: str = 'black') -> str:
-        """
-        Create an SVG element representing the dashed line of half of an aromatic bond
+    # @staticmethod
+    # def _draw_dashed_line(line: Line, color: str = 'black') -> str:
+    #     """
+    #     Create an SVG element representing the dashed line of half of an aromatic bond
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of half of the aromatic line of a bond
-        color: str, colour of the line
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of half of the aromatic line of a bond
+    #     color: str, colour of the line
 
-        Returns
-        ----------
-        svg_line: str, SVG element depicting half of an aromatic bond
-        """
-        # Create this loop to limit svg size: default colour is black
-        if color != 'black':
-            svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke="{color}" stroke-dasharray="3,2"/>'
-        else:
-            svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke-dasharray="3,2"/>'
-        return svg_line
+    #     Returns
+    #     ----------
+    #     svg_line: str, SVG element depicting half of an aromatic bond
+    #     """
+    #     # Create this loop to limit svg size: default colour is black
+    #     if color != 'black':
+    #         svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke="{color}" stroke-dasharray="3,2"/>'
+    #     else:
+    #         svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke-dasharray="3,2"/>'
+    #     return svg_line
 
-    @staticmethod
-    def _draw_line(line: Line, color: str = 'black') -> str:
-        """
-        Create an SVG element representing the line of half of a bond
+    # @staticmethod
+    # def _draw_line(line: Line, color: str = 'black') -> str:
+    #     """
+    #     Create an SVG element representing the line of half of a bond
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of half of the line of a bond
-        color: str, colour of the line
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of half of the line of a bond
+    #     color: str, colour of the line
 
-        Returns
-        ----------
-        svg_line: str, SVG element depicting half of a bond
-        """
-        # Create this loop to limit svg size: default colour is black
-        svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke-width="1" stroke="{color}"/>'
-        return svg_line
+    #     Returns
+    #     ----------
+    #     svg_line: str, SVG element depicting half of a bond
+    #     """
+    #     # Create this loop to limit svg size: default colour is black
+    #     svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke-width="1" stroke="{color}"/>'
+    #     return svg_line
 
     def _plot_halflines(self, line: Line, ax: Axes, midpoint: Vector, aromatic: bool = False) -> None:
         """
@@ -1960,76 +1960,76 @@ class Drawer:
                     [line.point_1.y, line.point_2.y], color=color, linewidth=self.options.bond_thickness,
                     linestyle='dashed', dashes=(2, 1))
 
-    @staticmethod
-    def get_image_as_array() -> np.ndarray:
-        """
-        Returns numpy array representing a pixelated version of the drawing
-        """
-        # Return image as np.ndarray that represents RGB image
-        canvas = plt.gca().figure.canvas
-        canvas.draw()
-        image = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
-        image = image.reshape(canvas.get_width_height()[::-1] + (3,))
-        plt.close('all')
-        return image
+    # @staticmethod
+    # def get_image_as_array() -> np.ndarray:
+    #     """
+    #     Returns numpy array representing a pixelated version of the drawing
+    #     """
+    #     # Return image as np.ndarray that represents RGB image
+    #     canvas = plt.gca().figure.canvas
+    #     canvas.draw()
+    #     image = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
+    #     image = image.reshape(canvas.get_width_height()[::-1] + (3,))
+    #     plt.close('all')
+    #     return image
 
-    @staticmethod
-    def save_svg_matplotlib(out_file: str) -> None:
-        """
-        Save matplotlib canvas to an SVG file
+    # @staticmethod
+    # def save_svg_matplotlib(out_file: str) -> None:
+    #     """
+    #     Save matplotlib canvas to an SVG file
 
-        Parameters
-        ----------
-        out_file: str, path to output SVG
-        """
-        if out_file.endswith('.svg'):
-            pass
-        else:
-            out_file += '.svg'
-        plt.savefig(out_file)
-        plt.clf()
-        plt.close(plt.gcf())
-        plt.close('all')
+    #     Parameters
+    #     ----------
+    #     out_file: str, path to output SVG
+    #     """
+    #     if out_file.endswith('.svg'):
+    #         pass
+    #     else:
+    #         out_file += '.svg'
+    #     plt.savefig(out_file)
+    #     plt.clf()
+    #     plt.close(plt.gcf())
+    #     plt.close('all')
 
-    @staticmethod
-    def get_svg_string_matplotlib() -> str:
-        """
-        Returns str, SVG string of matplotlib canvas
-        """
-        svg_string = StringIO()
-        plt.savefig(svg_string, format='svg')
-        svg = svg_string.getvalue()
+    # @staticmethod
+    # def get_svg_string_matplotlib() -> str:
+    #     """
+    #     Returns str, SVG string of matplotlib canvas
+    #     """
+    #     svg_string = StringIO()
+    #     plt.savefig(svg_string, format='svg')
+    #     svg = svg_string.getvalue()
 
-        plt.clf()
-        plt.close(plt.gcf())
-        plt.close('all')
-        return svg
+    #     plt.clf()
+    #     plt.close(plt.gcf())
+    #     plt.close('all')
+    #     return svg
 
-    @staticmethod
-    def save_png_matplotlib(out_file: str) -> None:
-        """
-        Save matplotlib canvas to a PNG file
+    # @staticmethod
+    # def save_png_matplotlib(out_file: str) -> None:
+    #     """
+    #     Save matplotlib canvas to a PNG file
 
-        Parameters
-        ----------
-        out_file: str, path to output PNG
-        """
-        if out_file.endswith('.png'):
-            pass
-        else:
-            out_file += '.png'
-        plt.savefig(out_file)
-        plt.clf()
-        plt.close()
+    #     Parameters
+    #     ----------
+    #     out_file: str, path to output PNG
+    #     """
+    #     if out_file.endswith('.png'):
+    #         pass
+    #     else:
+    #         out_file += '.png'
+    #     plt.savefig(out_file)
+    #     plt.clf()
+    #     plt.close()
 
-    @staticmethod
-    def show_molecule() -> None:
-        """
-        Show canvas in matplotlib GUI
-        """
-        plt.show()
-        plt.clf()
-        plt.close()
+    # @staticmethod
+    # def show_molecule() -> None:
+    #     """
+    #     Show canvas in matplotlib GUI
+    #     """
+    #     plt.show()
+    #     plt.clf()
+    #     plt.close()
 
     @staticmethod
     def _chiral_bond_drawn_correctly(bond: Bond) -> bool:
@@ -3506,40 +3506,40 @@ class Drawer:
                 if anchored_ring.center:
                     anchored_ring.center.rotate_around_vector(angle, center)
 
-    def get_average_position(self) -> Vector:
-        """
-        Returns the average position (float) of the structure
-        """
-        sum_x: float = 0.0
-        sum_y: float = 0.0
+    # def get_average_position(self) -> Vector:
+    #     """
+    #     Returns the average position (float) of the structure
+    #     """
+    #     sum_x: float = 0.0
+    #     sum_y: float = 0.0
 
-        for atom in self.drawn_atoms:
-            sum_x += atom.draw.position.x
-            sum_y += atom.draw.position.y
+    #     for atom in self.drawn_atoms:
+    #         sum_x += atom.draw.position.x
+    #         sum_y += atom.draw.position.y
 
-        nr_atoms: int = len(self.drawn_atoms)
+    #     nr_atoms: int = len(self.drawn_atoms)
 
-        return Vector(sum_x / nr_atoms, sum_y / nr_atoms)
+    #     return Vector(sum_x / nr_atoms, sum_y / nr_atoms)
 
-    def rotate_structure(self, angle, midpoint: Optional[Vector] = None) -> None:
-        """
-        Rotate the entire drawing around a midpoint if given, around its average position otherwise
+    # def rotate_structure(self, angle, midpoint: Optional[Vector] = None) -> None:
+    #     """
+    #     Rotate the entire drawing around a midpoint if given, around its average position otherwise
 
-        Parameters
-        ----------
-        angle: float, angle in radians by which to rotate the structure
-        midpoint: Vector or None. If given, rotate around Vector. If None, calculate the midpoint of the structure as
-            drawn and rotate around that
-        """
+    #     Parameters
+    #     ----------
+    #     angle: float, angle in radians by which to rotate the structure
+    #     midpoint: Vector or None. If given, rotate around Vector. If None, calculate the midpoint of the structure as
+    #         drawn and rotate around that
+    #     """
 
-        if midpoint is None:
-            midpoint: Vector = self.get_average_position()
+    #     if midpoint is None:
+    #         midpoint: Vector = self.get_average_position()
 
-        for atom in self.drawn_atoms:
-            atom.draw.position.rotate_around_vector(angle, midpoint)
-            for anchored_ring in atom.draw.anchored_rings:
-                if anchored_ring.center:
-                    anchored_ring.center.rotate_around_vector(angle, midpoint)
+    #     for atom in self.drawn_atoms:
+    #         atom.draw.position.rotate_around_vector(angle, midpoint)
+    #         for anchored_ring in atom.draw.anchored_rings:
+    #             if anchored_ring.center:
+    #                 anchored_ring.center.rotate_around_vector(angle, midpoint)
 
     def traverse_substructure(self, atom: Atom, visited: Set[Atom]) -> Generator[Atom, None, None]:
         """
@@ -3583,28 +3583,28 @@ class Drawer:
 
         return len(masked_atoms) - 1
 
-    @staticmethod
-    def get_last_atom_with_angle(atom: Atom) -> Optional[Atom]:
-        """
-        Returns the angle of the last visited atom
+    # @staticmethod
+    # def get_last_atom_with_angle(atom: Atom) -> Optional[Atom]:
+    #     """
+    #     Returns the angle of the last visited atom
 
-        Parameters
-        ----------
-        atom: Atom instance, atom for which to determine the angle
+    #     Parameters
+    #     ----------
+    #     atom: Atom instance, atom for which to determine the angle
 
-        Returns
-        -------
-        parent_atom: Atom instance, last atom to be assigned an angle
+    #     Returns
+    #     -------
+    #     parent_atom: Atom instance, last atom to be assigned an angle
 
-        """
-        parent_atom: Optional[Atom] = atom.draw.previous_atom
-        angle: float = parent_atom.draw.angle
+    #     """
+    #     parent_atom: Optional[Atom] = atom.draw.previous_atom
+    #     angle: float = parent_atom.draw.angle
 
-        while parent_atom and not angle:
-            parent_atom = parent_atom.draw.previous_atom
-            angle = parent_atom.draw.angle
+    #     while parent_atom and not angle:
+    #         parent_atom = parent_atom.draw.previous_atom
+    #         angle = parent_atom.draw.angle
 
-        return parent_atom
+    #     return parent_atom
 
     def create_ring(self, ring: Ring, center: Optional[Vector] = None, start_atom: Optional[Atom] = None,
                     previous_atom: Optional[Atom] = None) -> None:
@@ -4076,10 +4076,10 @@ class Drawer:
             for ring in atom.draw.rings:
                 atom.draw.original_rings.append(ring)
 
-    def get_ring_index(self, ring_id):
-        for i, ring in enumerate(self.rings):
-            if ring.id == ring_id:
-                return i
+    # def get_ring_index(self, ring_id):
+    #     for i, ring in enumerate(self.rings):
+    #         if ring.id == ring_id:
+    #             return i
 
     def get_ring(self, ring_id):
         for ring in self.rings:
@@ -4173,41 +4173,41 @@ class Drawer:
         return atom_distances
 
 
-def draw_multiple(structure: Structure, coords_only: bool = False, options: Union[None, Options] = None, kekulise=True) -> Drawer:
-    if not options:
-        options = Options()
-    options_main = Options()
-    options_main.finetune = False
+# def draw_multiple(structure: Structure, coords_only: bool = False, options: Union[None, Options] = None, kekulise=True) -> Drawer:
+#     if not options:
+#         options = Options()
+#     options_main = Options()
+#     options_main.finetune = False
 
-    drawer = Drawer(structure, options=options_main, coords_only=True, multiple=True)
-    structures = structure.split_disconnected_structures()
-    max_x = -100000000
+#     drawer = Drawer(structure, options=options_main, coords_only=True, multiple=True)
+#     structures = structure.split_disconnected_structures()
+#     max_x = -100000000
 
-    for i, substructure in enumerate(structures):
-        subdrawer = Drawer(substructure, options=options, coords_only=True, kekulise=kekulise)
-        bounding_box = subdrawer.structure.get_bounding_box()
-        min_x = bounding_box[0]
-        diff_x = max_x - min_x
+#     for i, substructure in enumerate(structures):
+#         subdrawer = Drawer(substructure, options=options, coords_only=True, kekulise=kekulise)
+#         bounding_box = subdrawer.structure.get_bounding_box()
+#         min_x = bounding_box[0]
+#         diff_x = max_x - min_x
 
-        if max_x != -100000000:
-            subdrawer.move_structure(x=diff_x + 20)
+#         if max_x != -100000000:
+#             subdrawer.move_structure(x=diff_x + 20)
 
-        bounding_box = subdrawer.structure.get_bounding_box()
-        max_x = bounding_box[2]
+#         bounding_box = subdrawer.structure.get_bounding_box()
+#         max_x = bounding_box[2]
 
-        drawer.chiral_bonds += subdrawer.chiral_bonds
-        drawer.chiral_bond_to_orientation.update(subdrawer.chiral_bond_to_orientation)
+#         drawer.chiral_bonds += subdrawer.chiral_bonds
+#         drawer.chiral_bond_to_orientation.update(subdrawer.chiral_bond_to_orientation)
 
-        for atom in subdrawer.structure.graph:
-            if atom.draw.is_drawn:
-                atom_2 = drawer.structure.atoms[atom.nr]
-                atom_2.draw.position = atom.draw.position
-                atom_2.draw.positioned = True
+#         for atom in subdrawer.structure.graph:
+#             if atom.draw.is_drawn:
+#                 atom_2 = drawer.structure.atoms[atom.nr]
+#                 atom_2.draw.position = atom.draw.position
+#                 atom_2.draw.positioned = True
 
-    drawer.structure.refresh_structure()
+#     drawer.structure.refresh_structure()
 
-    if not coords_only:
-        drawer.plot_structure()
+#     if not coords_only:
+#         drawer.plot_structure()
 
-    return drawer
+#     return drawer
 

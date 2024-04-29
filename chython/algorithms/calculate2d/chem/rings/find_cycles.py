@@ -3,48 +3,48 @@
 # Original paper: Donald B Johnson. "Finding all the elementary circuits of a directed graph." SIAM Journal on Computing. 1975.
 
 from collections import OrderedDict, defaultdict
-import copy
+# import copy
 
 
-def in_cycle(cycles, atom):
-    for cycle in cycles:
-        if atom in cycle:
-            return True
-    return False
+# def in_cycle(cycles, atom):
+#     for cycle in cycles:
+#         if atom in cycle:
+#             return True
+#     return False
 
 
-def find_cycles(graph):
-    all_cycles = simple_cycles(graph)
-    cycles = []
-    sorted_cycles = set()
-    for cycle in all_cycles:
-        if len(cycle) > 2:
-            sorted_cycle = tuple(sorted(cycle, key=lambda x: x.nr))
-            if sorted_cycle not in sorted_cycles:
-                sorted_cycles.add(sorted_cycle)
-                cycles.append(cycle)
+# def find_cycles(graph):
+#     all_cycles = simple_cycles(graph)
+#     cycles = []
+#     sorted_cycles = set()
+#     for cycle in all_cycles:
+#         if len(cycle) > 2:
+#             sorted_cycle = tuple(sorted(cycle, key=lambda x: x.nr))
+#             if sorted_cycle not in sorted_cycles:
+#                 sorted_cycles.add(sorted_cycle)
+#                 cycles.append(cycle)
 
-    return cycles
+#     return cycles
 
 
-def is_reverse_cycle(cycle_1, cycle_2):
-    reversed_2 = list(reversed(cycle_2))
+# def is_reverse_cycle(cycle_1, cycle_2):
+#     reversed_2 = list(reversed(cycle_2))
 
-    starting_index = None
+#     starting_index = None
 
-    for i, atom in enumerate(reversed_2):
-        if atom == cycle_1[0]:
-            starting_index = i
+#     for i, atom in enumerate(reversed_2):
+#         if atom == cycle_1[0]:
+#             starting_index = i
 
-    if starting_index is None:
-        return False
+#     if starting_index is None:
+#         return False
 
-    else:
-        new_reversed = reversed_2[i:] + reversed_2[:i]
-        if new_reversed == cycle_1:
-            return True
-        else:
-            return False
+#     else:
+#         new_reversed = reversed_2[i:] + reversed_2[:i]
+#         if new_reversed == cycle_1:
+#             return True
+#         else:
+#             return False
 
 
 def simple_cycles(G):
@@ -157,31 +157,31 @@ class Cycles:
         self.find_unique_cycles(structure)
         self.make_microcycle_graph()
 
-    def find_x_membered(self, x):
-        five_membered = []
-        for cycle in self.unique_cycles:
-            if len(cycle) == x:
-                five_membered.append(cycle)
+    # def find_x_membered(self, x):
+    #     five_membered = []
+    #     for cycle in self.unique_cycles:
+    #         if len(cycle) == x:
+    #             five_membered.append(cycle)
 
-        return five_membered
+    #     return five_membered
 
-    def find_minimal_cycles(self):
-        nodes = set()
-        cycles = sorted(self.unique_cycles, key=lambda x: len(x))
+    # def find_minimal_cycles(self):
+    #     nodes = set()
+    #     cycles = sorted(self.unique_cycles, key=lambda x: len(x))
 
-        minimal_cycles = []
+    #     minimal_cycles = []
 
-        for cycle in cycles:
-            already_covered = True
-            for node in cycle:
-                if node not in nodes:
-                    already_covered = False
-                nodes.add(node)
+    #     for cycle in cycles:
+    #         already_covered = True
+    #         for node in cycle:
+    #             if node not in nodes:
+    #                 already_covered = False
+    #             nodes.add(node)
 
-            if not already_covered:
-                minimal_cycles.append(cycle)
+    #         if not already_covered:
+    #             minimal_cycles.append(cycle)
 
-        return minimal_cycles
+    #     return minimal_cycles
 
     def find_sssr(self):
         sorted_cycles = sorted(self.all_cycles, key=lambda x: len(x))
@@ -230,77 +230,73 @@ class Cycles:
                         if len(set(cycle_1).intersection(set(cycle_2))) > 1:
                             self.graph[cycle_1].append(cycle_2)
 
-    def make_bond_nr_dict(self):
-        self.bond_nr_dict = {}
-        for cycle in self.graph:
-            self.bond_nr_dict[cycle] = len(self.graph[cycle])
+    # def make_bond_nr_dict(self):
+    #     self.bond_nr_dict = {}
+    #     for cycle in self.graph:
+    #         self.bond_nr_dict[cycle] = len(self.graph[cycle])
 
-    def find_cyclic_systems(self):
-        working_graph = copy.deepcopy(self)
+    # def find_cyclic_systems(self):
+    #     working_graph = copy.deepcopy(self)
 
-        if working_graph.graph:
-            new_graphs = []
-            working_graph.make_bond_nr_dict()
+    #     if working_graph.graph:
+    #         new_graphs = []
+    #         working_graph.make_bond_nr_dict()
+    #         working_graph.remove_connectors()
+    #         start_node = list(working_graph.graph.keys())[0]
+    #         paths_collection = []
+    #         paths = []
+    #         while start_node:
+    #             path = working_graph.find_a_path(start_node)
+    #             paths.append(path)
 
-            working_graph.remove_connectors()
+    #             potential_start_nodes = working_graph.find_start_nodes(paths)
 
-            start_node = list(working_graph.graph.keys())[0]
+    #             try:
+    #                 start_node = potential_start_nodes[0]
 
-            paths_collection = []
-            paths = []
+    #             except IndexError:
+    #                 paths_collection.append(paths)
+    #                 paths = []
+    #                 potential_start_nodes = working_graph.find_new_start_node()
 
-            while start_node:
-                path = working_graph.find_a_path(start_node)
-                paths.append(path)
+    #                 try:
+    #                     start_node = potential_start_nodes[0]
 
-                potential_start_nodes = working_graph.find_start_nodes(paths)
+    #                 except IndexError:
+    #                     paths_collection.append(paths)
+    #                     start_node = None
 
-                try:
-                    start_node = potential_start_nodes[0]
+    #         for paths in paths_collection:
+    #             if paths:
+    #                 new_graph = working_graph.put_paths_in_graph(paths)
+    #                 new_graphs.append(new_graph)
 
-                except IndexError:
-                    paths_collection.append(paths)
-                    paths = []
-                    potential_start_nodes = working_graph.find_new_start_node()
+    #         # add back connectors
 
-                    try:
-                        start_node = potential_start_nodes[0]
+    #         for new_graph in new_graphs:
+    #             for node in new_graph:
+    #                 new_graph[node] = self.graph[node]
 
-                    except IndexError:
-                        paths_collection.append(paths)
-                        start_node = None
+    #         # Add lone atoms
+    #         if working_graph.graph:
+    #             for atom in working_graph.graph:
+    #                 new_graph = {atom: []}
+    #                 if new_graph not in new_graphs:
+    #                     new_graphs.append(new_graph)
 
-            for paths in paths_collection:
-                if paths:
-                    new_graph = working_graph.put_paths_in_graph(paths)
-                    new_graphs.append(new_graph)
+    #         new_cycles = []
 
-            # add back connectors
+    #         for new_graph in new_graphs:
+    #             new_cycle = set([])
+    #             for cycle in new_graph.keys():
+    #                 for atom in cycle:
+    #                     new_cycle.add(atom)
+    #             new_cycles.append(tuple(new_cycle))
 
-            for new_graph in new_graphs:
-                for node in new_graph:
-                    new_graph[node] = self.graph[node]
+    #     else:
+    #         new_cycles = []
 
-            # Add lone atoms
-            if working_graph.graph:
-                for atom in working_graph.graph:
-                    new_graph = {atom: []}
-                    if new_graph not in new_graphs:
-                        new_graphs.append(new_graph)
-
-            new_cycles = []
-
-            for new_graph in new_graphs:
-                new_cycle = set([])
-                for cycle in new_graph.keys():
-                    for atom in cycle:
-                        new_cycle.add(atom)
-                new_cycles.append(tuple(new_cycle))
-
-        else:
-            new_cycles = []
-
-        return new_cycles
+    #     return new_cycles
 
     def find_start_nodes(self, paths):
         """Return atoms that still have outgoing bonds within an existing path
@@ -385,18 +381,18 @@ class Cycles:
             
         return path
 
-    def remove_connectors(self):
-        """Remove nodes that only have incoming edges from graph
+    # def remove_connectors(self):
+    #     """Remove nodes that only have incoming edges from graph
 
-        Input:
-        working_graph: dict of {node: [node, ->], ->}, representing a graph
+    #     Input:
+    #     working_graph: dict of {node: [node, ->], ->}, representing a graph
 
-        """
+    #     """
 
-        for node in self.graph:
-            for next_node in self.graph[node]:
-                if next_node not in self.graph:
-                    self.graph[node].remove(next_node)
+    #     for node in self.graph:
+    #         for next_node in self.graph[node]:
+    #             if next_node not in self.graph:
+    #                 self.graph[node].remove(next_node)
 
     def put_paths_in_graph(self, paths):
         """Return single structure from bond paths
@@ -434,20 +430,20 @@ class Cycles:
 
         return rest_group_graph
 
-    def find_new_start_node(self):
-        """Return list of nodes that still have outgoing edges
+    # def find_new_start_node(self):
+    #     """Return list of nodes that still have outgoing edges
 
-        Input:
-        edges_dict: dict of {node: int, ->}, with int representing the number of
-            outgoing edges of that node
+    #     Input:
+    #     edges_dict: dict of {node: int, ->}, with int representing the number of
+    #         outgoing edges of that node
 
-        Output:
-        start_nodes: list of [node, ->], with each node an immutable object
-        """
-        start_nodes = []
-        for atom in self.graph:
-            if self.bond_nr_dict[atom] > 0:
-                start_nodes.append(atom)
+    #     Output:
+    #     start_nodes: list of [node, ->], with each node an immutable object
+    #     """
+    #     start_nodes = []
+    #     for atom in self.graph:
+    #         if self.bond_nr_dict[atom] > 0:
+    #             start_nodes.append(atom)
 
-        return start_nodes
+    #     return start_nodes
         

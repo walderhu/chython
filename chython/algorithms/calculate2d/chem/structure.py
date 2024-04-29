@@ -1,13 +1,13 @@
 from pprint import pprint
 import sys
-from typing import Set, Generator
+# from typing import Set, Generator
 
 from ..chem.bond_properties import BOND_PROPERTIES
 from ..errors import StructureError, KekulisationError
 from ..chem.atom import Atom
 from ..chem.bond import Bond
 from ..chem.kekulisation import Match
-from ..chem.substructure_matching import check_same_chirality, find_substructures
+# from ..chem.substructure_matching import check_same_chirality, find_substructures
 from ..chem.rings.ring_identification import is_aromatic
 from ..chem.rings.find_cycles import Cycles
 from ..chem.aromatic_system import AromaticSystem
@@ -71,33 +71,33 @@ class Structure:
             return False
         return False
 
-    def get_subtree_size(self, atom: Atom, masked_atoms: Set[Atom], traverse_h=False) -> int:
-        """
-        Returns the size of a subtree starting at atom and ignoring all bonds adjacent to atoms in masked_atoms
+    # def get_subtree_size(self, atom: Atom, masked_atoms: Set[Atom], traverse_h=False) -> int:
+    #     """
+    #     Returns the size of a subtree starting at atom and ignoring all bonds adjacent to atoms in masked_atoms
 
-        Parameters
-        ----------
+    #     Parameters
+    #     ----------
 
-        atom: Atom instance, starting point of subtree
-        masked_atoms: set of {atom, ->}, atoms to be ignored
-        traverse_h: if True, include hydrogens. Default: False
+    #     atom: Atom instance, starting point of subtree
+    #     masked_atoms: set of {atom, ->}, atoms to be ignored
+    #     traverse_h: if True, include hydrogens. Default: False
 
-        Returns
-        -------
-        int, number of atoms in the subtree
+    #     Returns
+    #     -------
+    #     int, number of atoms in the subtree
 
-        """
-        masked_atoms.add(atom)
+    #     """
+    #     masked_atoms.add(atom)
 
-        for neighbour in atom.neighbours:
-            if neighbour not in masked_atoms:
-                if neighbour.type == 'H':
-                    if traverse_h:
-                        self.get_subtree_size(neighbour, masked_atoms)
-                else:
-                    self.get_subtree_size(neighbour, masked_atoms)
+    #     for neighbour in atom.neighbours:
+    #         if neighbour not in masked_atoms:
+    #             if neighbour.type == 'H':
+    #                 if traverse_h:
+    #                     self.get_subtree_size(neighbour, masked_atoms)
+    #             else:
+    #                 self.get_subtree_size(neighbour, masked_atoms)
 
-        return len(masked_atoms) - 1
+    #     return len(masked_atoms) - 1
 
     def get_subtree(self, atom, parent_atom):
         pass
@@ -262,27 +262,27 @@ class Structure:
                     if atom == parent_atom:
                         atom.draw.colour = colour
 
-    def to_dash_molecule2d_input(self):
-        nodes = []
-        links = []
+    # def to_dash_molecule2d_input(self):
+    #     nodes = []
+    #     links = []
 
-        kekulised_structure = self.kekulise()
+    #     kekulised_structure = self.kekulise()
 
-        for atom in kekulised_structure.graph:
-            atom_dict = {'id': atom.nr,
-                         'atom': atom.type}
-            nodes.append(atom_dict)
+    #     for atom in kekulised_structure.graph:
+    #         atom_dict = {'id': atom.nr,
+    #                      'atom': atom.type}
+    #         nodes.append(atom_dict)
 
-        for bond_nr, bond in kekulised_structure.bonds.items():
-            assert bond.type != 'aromatic'
-            bond_dict = {'id': bond_nr,
-                         'source': bond.atom_1.nr,
-                         'target': bond.atom_2.nr,
-                         'bond': BOND_PROPERTIES.bond_type_to_weight[bond.type]}
-            links.append(bond_dict)
+    #     for bond_nr, bond in kekulised_structure.bonds.items():
+    #         assert bond.type != 'aromatic'
+    #         bond_dict = {'id': bond_nr,
+    #                      'source': bond.atom_1.nr,
+    #                      'target': bond.atom_2.nr,
+    #                      'bond': BOND_PROPERTIES.bond_type_to_weight[bond.type]}
+    #         links.append(bond_dict)
 
-        dash_molecule2d_input = {'nodes': nodes, 'links': links}
-        return dash_molecule2d_input
+    #     dash_molecule2d_input = {'nodes': nodes, 'links': links}
+    #     return dash_molecule2d_input
 
     def get_drawn_atoms(self):
         atoms = []
@@ -553,90 +553,90 @@ class Structure:
 
                         bond.chiral = True
 
-    def find_next_atom_nr(self):
-        """
-        Return the next available integer to label an atom
+    # def find_next_atom_nr(self):
+    #     """
+    #     Return the next available integer to label an atom
 
-        Output
-        ------
-        next_atom_nr: int
-        """
-        atom_nrs = []
+    #     Output
+    #     ------
+    #     next_atom_nr: int
+    #     """
+    #     atom_nrs = []
 
-        for atom in self.graph:
-            atom_nrs.append(atom.nr)
+    #     for atom in self.graph:
+    #         atom_nrs.append(atom.nr)
 
-        atom_nrs.sort()
+    #     atom_nrs.sort()
 
-        next_atom_nr = None
+    #     next_atom_nr = None
 
-        for i, atom_nr in enumerate(atom_nrs):
-            if i != atom_nr:
-                next_atom_nr = i
-                break
+    #     for i, atom_nr in enumerate(atom_nrs):
+    #         if i != atom_nr:
+    #             next_atom_nr = i
+    #             break
 
-        if next_atom_nr is None:
-            next_atom_nr = atom_nrs[-1] + 1
+    #     if next_atom_nr is None:
+    #         next_atom_nr = atom_nrs[-1] + 1
 
-        return next_atom_nr
+    #     return next_atom_nr
 
-    def find_highest_atom_nr(self):
-        highest_atom_nr = -1
-        for atom in self.graph:
-            if atom.nr > highest_atom_nr:
-                highest_atom_nr = atom.nr
+    # def find_highest_atom_nr(self):
+    #     highest_atom_nr = -1
+    #     for atom in self.graph:
+    #         if atom.nr > highest_atom_nr:
+    #             highest_atom_nr = atom.nr
 
-        return highest_atom_nr
+    #     return highest_atom_nr
 
-    def find_highest_bond_nr(self):
-        highest_bond_nr = -1
-        for bond_nr in self.bonds:
-            if bond_nr > highest_bond_nr:
-                highest_bond_nr = bond_nr
+    # def find_highest_bond_nr(self):
+    #     highest_bond_nr = -1
+    #     for bond_nr in self.bonds:
+    #         if bond_nr > highest_bond_nr:
+    #             highest_bond_nr = bond_nr
 
-        return highest_bond_nr
+    #     return highest_bond_nr
 
-    def get_steric_atoms(self):
-        """
-        Return list of atoms that are chiral centres
+    # def get_steric_atoms(self):
+    #     """
+    #     Return list of atoms that are chiral centres
 
-        Output
-        ------
-        steric atoms: list of [atom, ->]
-            with each atom (Atom object) a chiral centre in the structure
-        """
-        steric_atoms = []
-        for atom in self.graph:
-            if atom.chiral:
-                steric_atoms.append(atom)
+    #     Output
+    #     ------
+    #     steric atoms: list of [atom, ->]
+    #         with each atom (Atom object) a chiral centre in the structure
+    #     """
+    #     steric_atoms = []
+    #     for atom in self.graph:
+    #         if atom.chiral:
+    #             steric_atoms.append(atom)
 
-        return steric_atoms
+    #     return steric_atoms
 
     # TODO:
     # call find_next_bond_nr in make_bond
 
-    def find_next_bond_nr(self):
-        """
-        Return the next available integer to label a bond
+    # def find_next_bond_nr(self):
+    #     """
+    #     Return the next available integer to label a bond
 
-        Output
-        ------
-        next_bond_nr: int
-        """
-        bond_nrs = list(self.bonds.keys())
-        bond_nrs.sort()
+    #     Output
+    #     ------
+    #     next_bond_nr: int
+    #     """
+    #     bond_nrs = list(self.bonds.keys())
+    #     bond_nrs.sort()
 
-        next_bond_nr = None
+    #     next_bond_nr = None
 
-        for i, bond_nr in enumerate(bond_nrs):
-            if i != bond_nr:
-                next_bond_nr = i
-                break
+    #     for i, bond_nr in enumerate(bond_nrs):
+    #         if i != bond_nr:
+    #             next_bond_nr = i
+    #             break
 
-        if next_bond_nr is None:
-            next_bond_nr = bond_nrs[-1] + 1
+    #     if next_bond_nr is None:
+    #         next_bond_nr = bond_nrs[-1] + 1
 
-        return next_bond_nr
+    #     return next_bond_nr
 
     def make_bond_lookup(self):
         """
@@ -653,52 +653,52 @@ class Structure:
             self.bond_lookup[atom_1][atom_2] = self.bonds[bond]
             self.bond_lookup[atom_2][atom_1] = self.bonds[bond]
 
-    def make_atom_index(self):
-        """
-        Return dict of {atom nr: atom}
+    # def make_atom_index(self):
+    #     """
+    #     Return dict of {atom nr: atom}
 
-        Output
-        ------
-        atom_nr_to_atom: dict of {atom nr: atom}
-            with atom nr (int) the unique number associated with an atom based
-            on the order they occurred in in the input SMILES, and atom
-            (Atom object) the atom associated with that number
-        """
-        atom_nr_to_atom = {}
-        for atom in self.graph:
-            atom_nr_to_atom[atom.nr] = atom
-        return atom_nr_to_atom
+    #     Output
+    #     ------
+    #     atom_nr_to_atom: dict of {atom nr: atom}
+    #         with atom nr (int) the unique number associated with an atom based
+    #         on the order they occurred in in the input SMILES, and atom
+    #         (Atom object) the atom associated with that number
+    #     """
+    #     atom_nr_to_atom = {}
+    #     for atom in self.graph:
+    #         atom_nr_to_atom[atom.nr] = atom
+    #     return atom_nr_to_atom
 
-    def add_atom(self, atom_type, neighbours, chiral=None, charge=0, aromatic=False):
-        """
-        Add a new atom to an already existing structure
+    # def add_atom(self, atom_type, neighbours, chiral=None, charge=0, aromatic=False):
+    #     """
+    #     Add a new atom to an already existing structure
 
-        Input
-        -----
-        atom_type: str, an abbreviation of an element of the periodic table
-        neighbours: list of Atom objects
-        chiral: str or None, str indicating the chirality (clockwise or
-            counterclockwise) if the new atom is a chiral centre, None
-            if the new atom is not a chiral centre
-        charge: int, charge of the new atom
-        """
+    #     Input
+    #     -----
+    #     atom_type: str, an abbreviation of an element of the periodic table
+    #     neighbours: list of Atom objects
+    #     chiral: str or None, str indicating the chirality (clockwise or
+    #         counterclockwise) if the new atom is a chiral centre, None
+    #         if the new atom is not a chiral centre
+    #     charge: int, charge of the new atom
+    #     """
 
-        next_atom_nr = self.find_next_atom_nr()
-        atom = Atom(atom_type, next_atom_nr, chiral, charge, aromatic)
-        atom._add_electron_shells()
+    #     next_atom_nr = self.find_next_atom_nr()
+    #     atom = Atom(atom_type, next_atom_nr, chiral, charge, aromatic)
+    #     atom._add_electron_shells()
 
-        for annotation, default in self.annotations:
-            atom.annotations.add_annotation(annotation, default)
+    #     for annotation, default in self.annotations:
+    #         atom.annotations.add_annotation(annotation, default)
 
-        for i, neighbour in enumerate(neighbours):
-            next_bond_nr = self.find_next_bond_nr()
-            self.make_bond(atom, neighbour, next_bond_nr)
+    #     for i, neighbour in enumerate(neighbours):
+    #         next_bond_nr = self.find_next_bond_nr()
+    #         self.make_bond(atom, neighbour, next_bond_nr)
 
-        atom.hybridise()
+    #     atom.hybridise()
 
-        self.atoms[atom.nr] = atom
+    #     self.atoms[atom.nr] = atom
 
-        return atom
+    #     return atom
 
     def find_cycles(self):
         """
@@ -1015,117 +1015,117 @@ class Structure:
         for atom in self.graph:
             atom._set_neighbours(self)
 
-    def get_connectivities(self):
-        connectivities = {}
-        for atom in self.graph:
-            if atom.type != 'H':
-                connectivity = atom.connectivity
-                if connectivity not in connectivities:
-                    connectivities[connectivity] = []
-                    connectivities[connectivity].append(atom)
+    # def get_connectivities(self):
+    #     connectivities = {}
+    #     for atom in self.graph:
+    #         if atom.type != 'H':
+    #             connectivity = atom.connectivity
+    #             if connectivity not in connectivities:
+    #                 connectivities[connectivity] = []
+    #                 connectivities[connectivity].append(atom)
 
-        return connectivities
+    #     return connectivities
 
-    def get_chiral_double_bonds(self):
-        chiral_bonds = []
-        for bond_nr in self.bonds:
-            bond = self.bonds[bond_nr]
-            if bond.chiral:
-                chiral_bonds.append(bond)
+    # def get_chiral_double_bonds(self):
+    #     chiral_bonds = []
+    #     for bond_nr in self.bonds:
+    #         bond = self.bonds[bond_nr]
+    #         if bond.chiral:
+    #             chiral_bonds.append(bond)
 
-        return chiral_bonds
+    #     return chiral_bonds
 
-    def check_chiral_double_bonds(self, child, match):
-        chirality_matches = True
-        chiral_bonds = child.get_chiral_double_bonds()
+    # def check_chiral_double_bonds(self, child, match):
+    #     chirality_matches = True
+    #     chiral_bonds = child.get_chiral_double_bonds()
 
-        for chiral_bond in chiral_bonds:
-            neighbour_1, neighbour_2 = chiral_bond.neighbours
+    #     for chiral_bond in chiral_bonds:
+    #         neighbour_1, neighbour_2 = chiral_bond.neighbours
 
-            parent_neighbour_1 = match[neighbour_1]
-            parent_neighbour_2 = match[neighbour_2]
-            parent_bond = self.bond_lookup[parent_neighbour_1][parent_neighbour_2]
+    #         parent_neighbour_1 = match[neighbour_1]
+    #         parent_neighbour_2 = match[neighbour_2]
+    #         parent_bond = self.bond_lookup[parent_neighbour_1][parent_neighbour_2]
 
-            if not parent_bond.chiral:
-                chirality_matches = False
-                break
-            else:
-                matching_chirality = chiral_bond.check_same_chirality(parent_bond, match)
-                if not matching_chirality:
-                    chirality_matches = False
-                    break
+    #         if not parent_bond.chiral:
+    #             chirality_matches = False
+    #             break
+    #         else:
+    #             matching_chirality = chiral_bond.check_same_chirality(parent_bond, match)
+    #             if not matching_chirality:
+    #                 chirality_matches = False
+    #                 break
 
-        return chirality_matches
+    #     return chirality_matches
 
-    @staticmethod
-    def check_chiral_centres(child, match):
-        chirality_matches = True
-        chiral_centres = child.get_steric_atoms()
+    # @staticmethod
+    # def check_chiral_centres(child, match):
+    #     chirality_matches = True
+    #     chiral_centres = child.get_steric_atoms()
 
-        for chiral_centre in chiral_centres:
-            parent_atom = match[chiral_centre]
-            if parent_atom.chiral:
+    #     for chiral_centre in chiral_centres:
+    #         parent_atom = match[chiral_centre]
+    #         if parent_atom.chiral:
 
-                chirality_matches = check_same_chirality(chiral_centre, parent_atom, match)
-                if not chirality_matches:
-                    break
-            else:
-                chirality_matches = False
-                break
+    #             chirality_matches = check_same_chirality(chiral_centre, parent_atom, match)
+    #             if not chirality_matches:
+    #                 break
+    #         else:
+    #             chirality_matches = False
+    #             break
 
-        return chirality_matches
+    #     return chirality_matches
 
-    def is_substructure_bond_composition(self, substructure):
-        bond_summary_to_count_parent = {}
-        bond_summary_to_count_child = {}
+    # def is_substructure_bond_composition(self, substructure):
+    #     bond_summary_to_count_parent = {}
+    #     bond_summary_to_count_child = {}
 
-        for bond_nr, bond in self.bonds:
-            bond_summary = bond.bond_summary
-            if 'H' not in [atom.type for atom in bond.neighbours]:
-                if bond_summary not in bond_summary_to_count_parent:
-                    bond_summary_to_count_parent[bond_summary] = 0
-                bond_summary_to_count_parent[bond_summary] += 1
-        for bond_nr, bond in substructure.bonds:
-            if 'H' not in [atom.type for atom in bond.neighbours]:
-                bond_summary = bond.bond_summary
-                if bond_summary not in bond_summary_to_count_child:
-                    bond_summary_to_count_child[bond_summary] = 0
-                bond_summary_to_count_child[bond_summary] += 1
+    #     for bond_nr, bond in self.bonds:
+    #         bond_summary = bond.bond_summary
+    #         if 'H' not in [atom.type for atom in bond.neighbours]:
+    #             if bond_summary not in bond_summary_to_count_parent:
+    #                 bond_summary_to_count_parent[bond_summary] = 0
+    #             bond_summary_to_count_parent[bond_summary] += 1
+    #     for bond_nr, bond in substructure.bonds:
+    #         if 'H' not in [atom.type for atom in bond.neighbours]:
+    #             bond_summary = bond.bond_summary
+    #             if bond_summary not in bond_summary_to_count_child:
+    #                 bond_summary_to_count_child[bond_summary] = 0
+    #             bond_summary_to_count_child[bond_summary] += 1
 
-        can_be_substructure = True
+    #     can_be_substructure = True
 
-        for bond_summary, count in bond_summary_to_count_child.items():
-            if bond_summary not in bond_summary_to_count_parent:
-                can_be_substructure = False
-                break
-            elif count > bond_summary_to_count_parent[bond_summary]:
-                can_be_substructure = False
-                break
+    #     for bond_summary, count in bond_summary_to_count_child.items():
+    #         if bond_summary not in bond_summary_to_count_parent:
+    #             can_be_substructure = False
+    #             break
+    #         elif count > bond_summary_to_count_parent[bond_summary]:
+    #             can_be_substructure = False
+    #             break
 
-        return can_be_substructure
+    #     return can_be_substructure
 
-    def find_substructures(self, substructure, check_chiral_centres=True, check_chiral_double_bonds=True):
-        matches = []
-        if self.is_substructure_atom_composition(substructure):
-            if self.is_substructure_atom_connectivity(substructure):
-                matches = find_substructures(self, substructure)
+    # def find_substructures(self, substructure, check_chiral_centres=True, check_chiral_double_bonds=True):
+    #     matches = []
+    #     if self.is_substructure_atom_composition(substructure):
+    #         if self.is_substructure_atom_connectivity(substructure):
+    #             matches = find_substructures(self, substructure)
 
-        if check_chiral_centres:
-            final_matches = []
+    #     if check_chiral_centres:
+    #         final_matches = []
 
-            for match in matches:
-                if self.check_chiral_centres(substructure, match.atoms):
-                    final_matches.append(match)
-            matches = final_matches
+    #         for match in matches:
+    #             if self.check_chiral_centres(substructure, match.atoms):
+    #                 final_matches.append(match)
+    #         matches = final_matches
 
-        if check_chiral_double_bonds:
-            final_matches = []
-            for match in matches:
-                if self.check_chiral_double_bonds(substructure, match.atoms):
-                    final_matches.append(match)
-            matches = final_matches
+    #     if check_chiral_double_bonds:
+    #         final_matches = []
+    #         for match in matches:
+    #             if self.check_chiral_double_bonds(substructure, match.atoms):
+    #                 final_matches.append(match)
+    #         matches = final_matches
 
-        return matches
+    #     return matches
 
     def get_atom(self, atom):
         return self.atoms[atom.nr]
@@ -1133,89 +1133,89 @@ class Structure:
     def get_bond(self, bond):
         return self.bonds[bond.nr]
 
-    def is_substructure_atom_composition(self, child):
+    # def is_substructure_atom_composition(self, child):
 
-        atom_counts_self = self.get_atom_counts()
-        atom_counts_child = child.get_atom_counts()
+    #     atom_counts_self = self.get_atom_counts()
+    #     atom_counts_child = child.get_atom_counts()
 
-        can_be_substructure = True
+    #     can_be_substructure = True
 
-        for atom_type in atom_counts_child:
-            try:
-                atom_nr_self = atom_counts_self[atom_type]
-                atom_nr_child = atom_counts_child[atom_type]
-                if atom_nr_child > atom_nr_self:
-                    can_be_substructure = False
-                    break
-            except KeyError:
-                can_be_substructure = False
-                break
+    #     for atom_type in atom_counts_child:
+    #         try:
+    #             atom_nr_self = atom_counts_self[atom_type]
+    #             atom_nr_child = atom_counts_child[atom_type]
+    #             if atom_nr_child > atom_nr_self:
+    #                 can_be_substructure = False
+    #                 break
+    #         except KeyError:
+    #             can_be_substructure = False
+    #             break
 
-        return can_be_substructure
+    #     return can_be_substructure
 
-    def get_connectivity_counts(self):
-        connectivities = {}
-        for atom in self.graph:
-            if atom.type != 'H':
-                if atom.type not in connectivities:
-                    connectivities[atom.type] = {}
-                connectivity = atom.connectivity
-                if connectivity not in connectivities[atom.type]:
-                    connectivities[atom.type][connectivity] = 0
-                connectivities[atom.type][connectivity] += 1
+    # def get_connectivity_counts(self):
+    #     connectivities = {}
+    #     for atom in self.graph:
+    #         if atom.type != 'H':
+    #             if atom.type not in connectivities:
+    #                 connectivities[atom.type] = {}
+    #             connectivity = atom.connectivity
+    #             if connectivity not in connectivities[atom.type]:
+    #                 connectivities[atom.type][connectivity] = 0
+    #             connectivities[atom.type][connectivity] += 1
 
-        return connectivities
+    #     return connectivities
 
-    def get_substructure_connectivity_counts(self, atom_connectivities_child):
-        substructure_connectivity_counts = {}
-        for atom_type in atom_connectivities_child:
-            substructure_connectivity_counts[atom_type] = {}
-            for connectivity in atom_connectivities_child[atom_type]:
-                substructure_connectivity_counts[atom_type][connectivity] = 0
-                for atom in self.graph:
-                    if atom.type == atom_type and atom._has_similar_connectivity(connectivity):
-                        substructure_connectivity_counts[atom_type][connectivity] += 1
+    # def get_substructure_connectivity_counts(self, atom_connectivities_child):
+    #     substructure_connectivity_counts = {}
+    #     for atom_type in atom_connectivities_child:
+    #         substructure_connectivity_counts[atom_type] = {}
+    #         for connectivity in atom_connectivities_child[atom_type]:
+    #             substructure_connectivity_counts[atom_type][connectivity] = 0
+    #             for atom in self.graph:
+    #                 if atom.type == atom_type and atom._has_similar_connectivity(connectivity):
+    #                     substructure_connectivity_counts[atom_type][connectivity] += 1
 
-        return substructure_connectivity_counts
+    #     return substructure_connectivity_counts
 
-    def get_substructure_connectivities(self, atom_connectivities_child):
-        substructure_connectivities = {}
-        for substructure_connectivity in atom_connectivities_child:
-            substructure_connectivities[substructure_connectivity] = []
-            for atom in self.graph:
-                if atom.type != 'H' and atom._has_similar_connectivity(substructure_connectivity):
-                    substructure_connectivities[substructure_connectivity].append(atom)
+    # def get_substructure_connectivities(self, atom_connectivities_child):
+    #     substructure_connectivities = {}
+    #     for substructure_connectivity in atom_connectivities_child:
+    #         substructure_connectivities[substructure_connectivity] = []
+    #         for atom in self.graph:
+    #             if atom.type != 'H' and atom._has_similar_connectivity(substructure_connectivity):
+    #                 substructure_connectivities[substructure_connectivity].append(atom)
 
-        return substructure_connectivities
+    #     return substructure_connectivities
 
-    def is_substructure_atom_connectivity(self, child):
+    # def is_substructure_atom_connectivity(self, child):
 
-        atom_connectivities_child = child.get_connectivity_counts()
-        atom_connectivities_self = self.get_substructure_connectivity_counts(atom_connectivities_child)
+    #     atom_connectivities_child = child.get_connectivity_counts()
+    #     atom_connectivities_self = self.get_substructure_connectivity_counts(atom_connectivities_child)
 
-        can_be_substructure = True
+    #     can_be_substructure = True
 
-        for atom_type in atom_connectivities_child:
-            for connectivity in atom_connectivities_child[atom_type]:
-                connectivity_nr_self = atom_connectivities_self[atom_type][connectivity]
-                connectivity_nr_child = atom_connectivities_child[atom_type][connectivity]
-                if connectivity_nr_child > connectivity_nr_self:
-                    can_be_substructure = False
-                    break
+    #     for atom_type in atom_connectivities_child:
+    #         for connectivity in atom_connectivities_child[atom_type]:
+    #             connectivity_nr_self = atom_connectivities_self[atom_type][connectivity]
+    #             connectivity_nr_child = atom_connectivities_child[atom_type][connectivity]
+    #             if connectivity_nr_child > connectivity_nr_self:
+    #                 can_be_substructure = False
+    #                 break
 
-        return can_be_substructure
+    #     return can_be_substructure
 
-    def make_bond_dict(self):
-        bond_dict = {}
+    # def make_bond_dict(self):
+    #     bond_dict = {}
 
-        for atom in self.graph:
-            if atom.type != 'H':
-                bond_dict[atom] = 0
-                for neighbour in atom.neighbours:
-                    if neighbour.type != 'H':
-                        bond_dict[atom] += 1
+    #     for atom in self.graph:
+    #         if atom.type != 'H':
+    #             bond_dict[atom] = 0
+    #             for neighbour in atom.neighbours:
+    #                 if neighbour.type != 'H':
+    #                     bond_dict[atom] += 1
 
-        return bond_dict
+    #     return bond_dict
 
     def drop_electrons(self):
         for atom in self.graph:
@@ -1294,93 +1294,93 @@ class Structure:
         for atom in self.graph:
             self.graph[atom].sort(key=lambda x: x.nr)
 
-    def make_dummy_bond(self, atom_1, atom_2, bond_nr, dummy=False):
-        if dummy:
-            bond_type = 'dummy'
-        else:
-            bond_type = 'single'
+    # def make_dummy_bond(self, atom_1, atom_2, bond_nr, dummy=False):
+    #     if dummy:
+    #         bond_type = 'dummy'
+    #     else:
+    #         bond_type = 'single'
 
-        if atom_1 in self.graph:
-            self.graph[atom_1].append(atom_2)
-        else:
-            self.graph[atom_1] = [atom_2]
+    #     if atom_1 in self.graph:
+    #         self.graph[atom_1].append(atom_2)
+    #     else:
+    #         self.graph[atom_1] = [atom_2]
 
-        if atom_2 in self.graph:
-            self.graph[atom_2].append(atom_1)
-        else:
-            self.graph[atom_2] = [atom_1]
+    #     if atom_2 in self.graph:
+    #         self.graph[atom_2].append(atom_1)
+    #     else:
+    #         self.graph[atom_2] = [atom_1]
 
-        bond = Bond(atom_1, atom_2, bond_type, bond_nr)
+    #     bond = Bond(atom_1, atom_2, bond_type, bond_nr)
 
-        atom_1._add_bond(bond)
-        atom_2._add_bond(bond)
+    #     atom_1._add_bond(bond)
+    #     atom_2._add_bond(bond)
 
-        self.bonds[bond_nr] = bond
+    #     self.bonds[bond_nr] = bond
 
-        if atom_1 not in self.bond_lookup:
-            self.bond_lookup[atom_1] = {}
-        if atom_2 not in self.bond_lookup:
-            self.bond_lookup[atom_2] = {}
+    #     if atom_1 not in self.bond_lookup:
+    #         self.bond_lookup[atom_1] = {}
+    #     if atom_2 not in self.bond_lookup:
+    #         self.bond_lookup[atom_2] = {}
 
-        self.bond_lookup[atom_1][atom_2] = bond
-        self.bond_lookup[atom_2][atom_1] = bond
+    #     self.bond_lookup[atom_1][atom_2] = bond
+    #     self.bond_lookup[atom_2][atom_1] = bond
 
-    def make_bond(self, atom_1, atom_2, bond_nr):
+    # def make_bond(self, atom_1, atom_2, bond_nr):
 
-        bond = Bond(atom_1, atom_2, 'single', bond_nr)
+    #     bond = Bond(atom_1, atom_2, 'single', bond_nr)
 
-        electron_1 = None
-        electron_2 = None
+    #     electron_1 = None
+    #     electron_2 = None
 
-        orbital_1 = None
-        orbital_2 = None
+    #     orbital_1 = None
+    #     orbital_2 = None
 
-        for orbital in atom_1.valence_shell.orbitals:
-            if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
-                orbital_1 = orbital
-                electron_1 = orbital_1.electrons[0]
-                break
+    #     for orbital in atom_1.valence_shell.orbitals:
+    #         if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
+    #             orbital_1 = orbital
+    #             electron_1 = orbital_1.electrons[0]
+    #             break
 
-        for orbital in atom_2.valence_shell.orbitals:
-            if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
-                orbital_2 = orbital
-                electron_2 = orbital_2.electrons[0]
-                break
+    #     for orbital in atom_2.valence_shell.orbitals:
+    #         if orbital.electron_nr == 1 and not orbital.electrons[0].aromatic:
+    #             orbital_2 = orbital
+    #             electron_2 = orbital_2.electrons[0]
+    #             break
 
-        orbital_1.add_electron(electron_2)
-        orbital_2.add_electron(electron_1)
+    #     orbital_1.add_electron(electron_2)
+    #     orbital_2.add_electron(electron_1)
 
-        orbital_1.set_bond(bond, 'sigma')
-        orbital_2.set_bond(bond, 'sigma')
+    #     orbital_1.set_bond(bond, 'sigma')
+    #     orbital_2.set_bond(bond, 'sigma')
 
-        atom_1._add_bond(bond)
-        atom_2._add_bond(bond)
+    #     atom_1._add_bond(bond)
+    #     atom_2._add_bond(bond)
 
-        self.bonds[bond_nr] = bond
+    #     self.bonds[bond_nr] = bond
 
-        if atom_1 not in self.bond_lookup:
-            self.bond_lookup[atom_1] = {}
-        if atom_2 not in self.bond_lookup:
-            self.bond_lookup[atom_2] = {}
+    #     if atom_1 not in self.bond_lookup:
+    #         self.bond_lookup[atom_1] = {}
+    #     if atom_2 not in self.bond_lookup:
+    #         self.bond_lookup[atom_2] = {}
 
-        if atom_1 in self.graph:
-            self.graph[atom_1].append(atom_2)
-        else:
-            self.graph[atom_1] = [atom_2]
+    #     if atom_1 in self.graph:
+    #         self.graph[atom_1].append(atom_2)
+    #     else:
+    #         self.graph[atom_1] = [atom_2]
 
-        if atom_2 in self.graph:
-            self.graph[atom_2].append(atom_1)
-        else:
-            self.graph[atom_2] = [atom_1]
+    #     if atom_2 in self.graph:
+    #         self.graph[atom_2].append(atom_1)
+    #     else:
+    #         self.graph[atom_2] = [atom_1]
 
-        self.bond_lookup[atom_1][atom_2] = bond
-        self.bond_lookup[atom_2][atom_1] = bond
+    #     self.bond_lookup[atom_1][atom_2] = bond
+    #     self.bond_lookup[atom_2][atom_1] = bond
 
-        bond.electrons.append(electron_1)
-        bond.electrons.append(electron_2)
+    #     bond.electrons.append(electron_1)
+    #     bond.electrons.append(electron_2)
 
-        atom_1._set_neighbours(self)
-        atom_2._set_neighbours(self)
+    #     atom_1._set_neighbours(self)
+    #     atom_2._set_neighbours(self)
 
     def add_bond(self, atom_1, atom_2, bond_type, bond_nr, chiral_symbol=None):
         if atom_1 in self.graph:
@@ -1421,67 +1421,67 @@ class Structure:
 
         self.annotations.add((annotation, default))
 
-    def reset_attributes(self, annotations, defaults=None, boolean=False):
+    # def reset_attributes(self, annotations, defaults=None, boolean=False):
 
-        for atom in self.graph:
-            for i, annotation in enumerate(annotations):
-                if defaults:
-                    default = defaults[i]
-                elif boolean:
-                    default = False
-                else:
-                    default = None
+    #     for atom in self.graph:
+    #         for i, annotation in enumerate(annotations):
+    #             if defaults:
+    #                 default = defaults[i]
+    #             elif boolean:
+    #                 default = False
+    #             else:
+    #                 default = None
 
-                atom.annotations.set_annotation(annotation, default)
+    #             atom.annotations.set_annotation(annotation, default)
         
-    def add_attributes(self, annotations, defaults=None, boolean=False):
-        if defaults:
-            assert len(defaults) == len(annotations)
+    # def add_attributes(self, annotations, defaults=None, boolean=False):
+    #     if defaults:
+    #         assert len(defaults) == len(annotations)
 
-            for i, annotation in enumerate(annotations):
-                self.annotations.add((annotation, defaults[i]))
+    #         for i, annotation in enumerate(annotations):
+    #             self.annotations.add((annotation, defaults[i]))
 
-        elif boolean:
-            for i, annotation in enumerate(annotations):
-                self.annotations.add((annotation, False))
+    #     elif boolean:
+    #         for i, annotation in enumerate(annotations):
+    #             self.annotations.add((annotation, False))
 
-        else:
-            for i, annotation in enumerate(annotations):
-                self.annotations.add((annotation, None))
+    #     else:
+    #         for i, annotation in enumerate(annotations):
+    #             self.annotations.add((annotation, None))
 
-        for atom in self.graph:
-            for i, annotation in enumerate(annotations):
-                if defaults:
-                    default = defaults[i]
-                elif boolean:
-                    default = False
-                else:
-                    default = None
+    #     for atom in self.graph:
+    #         for i, annotation in enumerate(annotations):
+    #             if defaults:
+    #                 default = defaults[i]
+    #             elif boolean:
+    #                 default = False
+    #             else:
+    #                 default = None
 
-                if annotation not in atom.annotations.annotations:
-                    atom.annotations.add_annotation(annotation, default)
+    #             if annotation not in atom.annotations.annotations:
+    #                 atom.annotations.add_annotation(annotation, default)
 
-    @staticmethod
-    def set_attribute(atoms, annotation, value):
-        for atom in atoms:
-            atom.annotations.set_annotation(annotation, value)
+    # @staticmethod
+    # def set_attribute(atoms, annotation, value):
+    #     for atom in atoms:
+    #         atom.annotations.set_annotation(annotation, value)
 
-    def get_atoms_of_type(self, atom_type):
-        atoms = []
-        for atom in self.atoms.values():
-            if atom.type == atom_type:
-                atoms.append(atom)
+    # def get_atoms_of_type(self, atom_type):
+    #     atoms = []
+    #     for atom in self.atoms.values():
+    #         if atom.type == atom_type:
+    #             atoms.append(atom)
 
-        return atoms
+    #     return atoms
 
-    def print_graph(self):
-        pprint(self.graph)
+    # def print_graph(self):
+    #     pprint(self.graph)
 
-    def print_atoms(self):
-        pprint(self.atoms)
+    # def print_atoms(self):
+    #     pprint(self.atoms)
 
-    def print_bonds(self):
-        pprint(self.bonds)
+    # def print_bonds(self):
+    #     pprint(self.bonds)
 
     def find_pi_subgraph(self, prune=True):
         pi_subgraph = {}
@@ -1626,263 +1626,263 @@ class Structure:
         return kekule_structure
 
 
-    def split_disconnected_structures(self):
-        """Return list of unconnected structures from structure
+    # def split_disconnected_structures(self):
+    #     """Return list of unconnected structures from structure
 
 
-        Output:
-        new_graphs: list of dicts of {node: [node, ->], ->}, with each dict a
-            bidirectional graph that is not connected to the other graphs in
-            the list
-        """
-        working_graph = self.deepcopy()
+    #     Output:
+    #     new_graphs: list of dicts of {node: [node, ->], ->}, with each dict a
+    #         bidirectional graph that is not connected to the other graphs in
+    #         the list
+    #     """
+    #     working_graph = self.deepcopy()
 
-        new_graphs = []
-        working_graph.make_bond_nr_dict()
+    #     new_graphs = []
+    #     working_graph.make_bond_nr_dict()
 
-        working_graph.remove_connectors()
+    #     working_graph.remove_connectors()
 
-        start_node = list(working_graph.graph.keys())[0]
+    #     start_node = list(working_graph.graph.keys())[0]
 
-        paths_collection = []
-        paths = []
+    #     paths_collection = []
+    #     paths = []
 
-        while start_node:
+    #     while start_node:
 
-            path = working_graph.find_a_path(start_node)
-            paths.append(path)
+    #         path = working_graph.find_a_path(start_node)
+    #         paths.append(path)
 
-            potential_start_nodes = working_graph.find_start_nodes(paths)
+    #         potential_start_nodes = working_graph.find_start_nodes(paths)
 
-            try:
+    #         try:
 
-                start_node = potential_start_nodes[0]
+    #             start_node = potential_start_nodes[0]
 
-            except IndexError:
-                paths_collection.append(paths)
-                paths = []
-                potential_start_nodes = working_graph.find_new_start_node()
+    #         except IndexError:
+    #             paths_collection.append(paths)
+    #             paths = []
+    #             potential_start_nodes = working_graph.find_new_start_node()
 
-                try:
-                    start_node = potential_start_nodes[0]
+    #             try:
+    #                 start_node = potential_start_nodes[0]
 
-                except IndexError:
-                    paths_collection.append(paths)
-                    start_node = None
+    #             except IndexError:
+    #                 paths_collection.append(paths)
+    #                 start_node = None
 
-        counter = 0
-        for paths in paths_collection:
-            if paths:
-                counter += 1
-                new_graph = working_graph.put_paths_in_graph(paths)
-                new_graphs.append(new_graph)
+    #     counter = 0
+    #     for paths in paths_collection:
+    #         if paths:
+    #             counter += 1
+    #             new_graph = working_graph.put_paths_in_graph(paths)
+    #             new_graphs.append(new_graph)
 
-        # add back connectors
+    #     # add back connectors
 
-        for new_graph in new_graphs:
-            for node in new_graph:
+    #     for new_graph in new_graphs:
+    #         for node in new_graph:
 
-                new_graph[node] = self.graph[node]
+    #             new_graph[node] = self.graph[node]
 
-        # Add lone atoms
-        if working_graph.graph:
-            for atom in working_graph.graph:
-                new_graph = {atom: []}
-                if new_graph not in new_graphs:
-                    new_graphs.append(new_graph)
+    #     # Add lone atoms
+    #     if working_graph.graph:
+    #         for atom in working_graph.graph:
+    #             new_graph = {atom: []}
+    #             if new_graph not in new_graphs:
+    #                 new_graphs.append(new_graph)
 
-        new_structures = []
+    #     new_structures = []
 
-        for new_graph in new_graphs:
-            new_structures.append(Structure(new_graph))
+    #     for new_graph in new_graphs:
+    #         new_structures.append(Structure(new_graph))
 
-        for new_structure in new_structures:
-            new_structure.infer_bonds()
-            new_structure.set_atom_neighbours()
-            new_structure.make_bond_lookup()
-            new_structure.refresh_structure(find_cycles=True)
+    #     for new_structure in new_structures:
+    #         new_structure.infer_bonds()
+    #         new_structure.set_atom_neighbours()
+    #         new_structure.make_bond_lookup()
+    #         new_structure.refresh_structure(find_cycles=True)
 
-        return new_structures
+    #     return new_structures
 
-    def infer_bonds(self):
-        self.bonds = {}
-        for atom in self.graph:
-            for bond in atom.bonds:
-                if bond.nr not in self.bonds:
-                    self.bonds[bond.nr] = bond
+    # def infer_bonds(self):
+    #     self.bonds = {}
+    #     for atom in self.graph:
+    #         for bond in atom.bonds:
+    #             if bond.nr not in self.bonds:
+    #                 self.bonds[bond.nr] = bond
 
     # ========================================================================
     # Auxillary functions
     # ========================================================================
 
-    @staticmethod
-    def put_paths_in_graph(paths):
-        """Return single structure from bond paths
+    # @staticmethod
+    # def put_paths_in_graph(paths):
+    #     """Return single structure from bond paths
 
-        Input:
-        paths: list of [atom, ->], with each atom a tuple of (str, int), with
-            str atom type and int atom number
+    #     Input:
+    #     paths: list of [atom, ->], with each atom a tuple of (str, int), with
+    #         str atom type and int atom number
 
-        Output:
-        rest_group_graph: dict of {atom: [atom, ->], ->}, with each atom a tuple
-            of (str, int), str representing atom type, and int representing atom
-            number. Example: ('O', 1). This graph represents the side chain of
-            an amino acid
-        """
-        rest_group_graph = {}
-        for path in paths:
-            current_atom = path[0]
-            if path[1:]:
-                for atom in path[1:]:
+    #     Output:
+    #     rest_group_graph: dict of {atom: [atom, ->], ->}, with each atom a tuple
+    #         of (str, int), str representing atom type, and int representing atom
+    #         number. Example: ('O', 1). This graph represents the side chain of
+    #         an amino acid
+    #     """
+    #     rest_group_graph = {}
+    #     for path in paths:
+    #         current_atom = path[0]
+    #         if path[1:]:
+    #             for atom in path[1:]:
 
-                    next_atom = atom
-                    if current_atom in rest_group_graph:
-                        rest_group_graph[current_atom] += [next_atom]
-                    else:
-                        rest_group_graph[current_atom] = [next_atom]
+    #                 next_atom = atom
+    #                 if current_atom in rest_group_graph:
+    #                     rest_group_graph[current_atom] += [next_atom]
+    #                 else:
+    #                     rest_group_graph[current_atom] = [next_atom]
 
-                    if next_atom in rest_group_graph:
-                        rest_group_graph[next_atom] += [current_atom]
-                    else:
-                        rest_group_graph[next_atom] = [current_atom]
+    #                 if next_atom in rest_group_graph:
+    #                     rest_group_graph[next_atom] += [current_atom]
+    #                 else:
+    #                     rest_group_graph[next_atom] = [current_atom]
 
-                    current_atom = atom
-            else:
-                rest_group_graph = {current_atom: []}
+    #                 current_atom = atom
+    #         else:
+    #             rest_group_graph = {current_atom: []}
 
-        return rest_group_graph
+    #     return rest_group_graph
 
-    def traverse_substructure(self, atom: Atom, visited: Set[Atom], traverse_h: bool = False) -> Generator[Atom, None, None]:
-        yield atom
-        visited.add(atom)
-        for neighbour in atom.neighbours:
-            if traverse_h:
-                if neighbour not in visited:
-                    yield from self.traverse_substructure(neighbour, visited)
-            else:
-                if neighbour not in visited and neighbour.type != 'H':
-                    yield from self.traverse_substructure(neighbour, visited)
+    # def traverse_substructure(self, atom: Atom, visited: Set[Atom], traverse_h: bool = False) -> Generator[Atom, None, None]:
+    #     yield atom
+    #     visited.add(atom)
+    #     for neighbour in atom.neighbours:
+    #         if traverse_h:
+    #             if neighbour not in visited:
+    #                 yield from self.traverse_substructure(neighbour, visited)
+    #         else:
+    #             if neighbour not in visited and neighbour.type != 'H':
+    #                 yield from self.traverse_substructure(neighbour, visited)
 
-    def make_bond_nr_dict(self):
-        """
-        """
-        self.bond_nr_dict = {}
-        for atom, neighbours in self.graph.items():
-            self.bond_nr_dict[atom] = len(neighbours)
+    # def make_bond_nr_dict(self):
+    #     """
+    #     """
+    #     self.bond_nr_dict = {}
+    #     for atom, neighbours in self.graph.items():
+    #         self.bond_nr_dict[atom] = len(neighbours)
 
-    def find_a_path(self, start_atom):
-        """Return a list of linked atoms from a structure
+    # def find_a_path(self, start_atom):
+    #     """Return a list of linked atoms from a structure
 
-        Input:
-        structure: dict of {atom: [atom, ->], ->}, with each atom a tuple of
-            (str, int), str representing atom type, and int representing atom
-            number. Example: ('O', 1)
-        start_atom: tuple of (str, int), with str atom type and int atom number
-        bond_dict: dict of {atom: remaining_bonds, ->}, with atom tuple of
-            (str, int), with str atom type and int atom number, and remaining bonds
-            int
+    #     Input:
+    #     structure: dict of {atom: [atom, ->], ->}, with each atom a tuple of
+    #         (str, int), str representing atom type, and int representing atom
+    #         number. Example: ('O', 1)
+    #     start_atom: tuple of (str, int), with str atom type and int atom number
+    #     bond_dict: dict of {atom: remaining_bonds, ->}, with atom tuple of
+    #         (str, int), with str atom type and int atom number, and remaining bonds
+    #         int
 
-        Output:
-        path: list of [atom, ->], where adjacent atoms are connected, and each atom
-            is a tuple of (str, int), with str atom type and int atom number
-        """
+    #     Output:
+    #     path: list of [atom, ->], where adjacent atoms are connected, and each atom
+    #         is a tuple of (str, int), with str atom type and int atom number
+    #     """
 
-        current_atom = start_atom
-        path = [current_atom]
+    #     current_atom = start_atom
+    #     path = [current_atom]
 
-        if len(self.graph[current_atom]) == 0:
-            path = [current_atom]
-            return path
+    #     if len(self.graph[current_atom]) == 0:
+    #         path = [current_atom]
+    #         return path
 
-        # keep trying to extend the path until there are no bonds to traverse
-        while True:
-            try:
+    #     # keep trying to extend the path until there are no bonds to traverse
+    #     while True:
+    #         try:
 
-                next_atom = self.graph[current_atom][0]
+    #             next_atom = self.graph[current_atom][0]
 
-                path.append(next_atom)
+    #             path.append(next_atom)
 
-                # remove traversed bond from structure
-                self.graph[current_atom].remove(next_atom)
-                if not next_atom == current_atom:
-                    self.graph[next_atom].remove(current_atom)
+    #             # remove traversed bond from structure
+    #             self.graph[current_atom].remove(next_atom)
+    #             if not next_atom == current_atom:
+    #                 self.graph[next_atom].remove(current_atom)
 
-                self.bond_nr_dict[current_atom] -= 1
-                self.bond_nr_dict[next_atom] -= 1
+    #             self.bond_nr_dict[current_atom] -= 1
+    #             self.bond_nr_dict[next_atom] -= 1
 
-                # remove atom from structure if no more untraversed bonds come
-                # from it
-                if not self.graph[current_atom]:
-                    del self.graph[current_atom]
+    #             # remove atom from structure if no more untraversed bonds come
+    #             # from it
+    #             if not self.graph[current_atom]:
+    #                 del self.graph[current_atom]
 
-                current_atom = next_atom
+    #             current_atom = next_atom
 
-                if not self.graph[current_atom]:
-                    del self.graph[current_atom]
+    #             if not self.graph[current_atom]:
+    #                 del self.graph[current_atom]
 
-            except KeyError:
-                break
+    #         except KeyError:
+    #             break
 
-        return path
+    #     return path
 
-    def find_start_nodes(self, paths):
-        """Return atoms that still have outgoing bonds within an existing path
+    # def find_start_nodes(self, paths):
+    #     """Return atoms that still have outgoing bonds within an existing path
 
-        Input:
-        paths: list of [atom, ->], with each atom a tuple of (str, int), with
-            str atom type and int atom number
-        bond_dict: dict of {atom: remaining_bonds, ->}, with atom tuple of
-            (str, int), with str atom type and int atom number, and remaining
-            bonds int
+    #     Input:
+    #     paths: list of [atom, ->], with each atom a tuple of (str, int), with
+    #         str atom type and int atom number
+    #     bond_dict: dict of {atom: remaining_bonds, ->}, with atom tuple of
+    #         (str, int), with str atom type and int atom number, and remaining
+    #         bonds int
 
-        Output:
-        start_atoms: list of [atom, ->], with each atom a tuple of (str, int),
-            with str atom type and int atom number
-
-
-        """
-
-        start_atoms = []
-        for path in paths:
-            for atom in path:
-                if self.bond_nr_dict[atom] > 0:
-                    start_atoms.append(atom)
-
-        return start_atoms
-
-    def remove_connectors(self):
-        """Remove nodes that only have incoming edges from graph
-
-        Input:
-        working_graph: dict of {node: [node, ->], ->}, representing a graph
-
-        """
-
-        for node in self.graph:
-            for next_node in self.graph[node]:
-                if next_node not in self.graph:
-                    self.graph[node].remove(next_node)
-
-    def find_new_start_node(self):
-        """Return list of nodes that still have outgoing edges
-
-        Input:
-        edges_dict: dict of {node: int, ->}, with int representing the number of
-            outgoing edges of that node
-
-        Output:
-        start_nodes: list of [node, ->], with each node an immutable object
-        """
-        start_nodes = []
-        for atom in self.graph:
-            if self.bond_nr_dict[atom] > 0:
-                start_nodes.append(atom)
-
-        return start_nodes
+    #     Output:
+    #     start_atoms: list of [atom, ->], with each atom a tuple of (str, int),
+    #         with str atom type and int atom number
 
 
-class Tree:
-    def __init__(self, is_root):
-        self.is_root = is_root
-        self.parent = None
-        self.children = []
+    #     """
+
+    #     start_atoms = []
+    #     for path in paths:
+    #         for atom in path:
+    #             if self.bond_nr_dict[atom] > 0:
+    #                 start_atoms.append(atom)
+
+    #     return start_atoms
+
+    # def remove_connectors(self):
+    #     """Remove nodes that only have incoming edges from graph
+
+    #     Input:
+    #     working_graph: dict of {node: [node, ->], ->}, representing a graph
+
+    #     """
+
+    #     for node in self.graph:
+    #         for next_node in self.graph[node]:
+    #             if next_node not in self.graph:
+    #                 self.graph[node].remove(next_node)
+
+#     def find_new_start_node(self):
+#         """Return list of nodes that still have outgoing edges
+
+#         Input:
+#         edges_dict: dict of {node: int, ->}, with int representing the number of
+#             outgoing edges of that node
+
+#         Output:
+#         start_nodes: list of [node, ->], with each node an immutable object
+#         """
+#         start_nodes = []
+#         for atom in self.graph:
+#             if self.bond_nr_dict[atom] > 0:
+#                 start_nodes.append(atom)
+
+#         return start_nodes
+
+
+# class Tree:
+#     def __init__(self, is_root):
+#         self.is_root = is_root
+#         self.parent = None
+#         self.children = []
