@@ -2,8 +2,8 @@
 from typing import Union, List, Tuple, Dict, Set, Generator, Optional, TYPE_CHECKING
 import math
 # import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib.axes import Axes
+# from matplotlib import pyplot as plt
+# from matplotlib.axes import Axes
 # from io import StringIO
 import re
 
@@ -1570,8 +1570,8 @@ class Drawer:
         if not self.multiple:
             self._process_structure()
             self.set_chiral_bonds()
-            if not coords_only:
-                self.plot_structure()
+            # if not coords_only:
+                # self.plot_structure()
         else:
             self.restore_ring_information()
 
@@ -1903,62 +1903,62 @@ class Drawer:
     #     svg_line = f'<line x1="{line.point_1.x}" y1="{line.point_1.y}" x2="{line.point_2.x}" y2="{line.point_2.y}" stroke-width="1" stroke="{color}"/>'
     #     return svg_line
 
-    def _plot_halflines(self, line: Line, ax: Axes, midpoint: Vector, aromatic: bool = False) -> None:
-        """
-        Plot one line of a bond in matplotlib
+    # def _plot_halflines(self, line: Line, ax: Axes, midpoint: Vector, aromatic: bool = False) -> None:
+    #     """
+    #     Plot one line of a bond in matplotlib
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of one line of a bond
-        midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
-            such that each bond half can be coloured separately
-        ax: matplotlib Axes instance, canvas to draw on
-        aromatic: bool, if True, draw a dashed line; if False, draw a solid line
-        """
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of one line of a bond
+    #     midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
+    #         such that each bond half can be coloured separately
+    #     ax: matplotlib Axes instance, canvas to draw on
+    #     aromatic: bool, if True, draw a dashed line; if False, draw a solid line
+    #     """
 
-        halflines = line.divide_in_two(midpoint)
-        for halfline in halflines:
-            truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
-            self._plot_line(truncated_line, ax, color=halfline.atom.draw.colour, aromatic=aromatic)
+    #     halflines = line.divide_in_two(midpoint)
+    #     for halfline in halflines:
+    #         truncated_line = halfline.get_truncated_line(self.options.short_bond_length)
+    #         self._plot_line(truncated_line, ax, color=halfline.atom.draw.colour, aromatic=aromatic)
 
-    def _plot_halflines_double(self, line: Line, ax: Axes, midpoint: Vector, aromatic: bool = False) -> None:
-        """
-        Plot one line of a pre-truncated double bond in matplotlib
+    # def _plot_halflines_double(self, line: Line, ax: Axes, midpoint: Vector, aromatic: bool = False) -> None:
+    #     """
+    #     Plot one line of a pre-truncated double bond in matplotlib
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of one line of a bond. This line has been pre-truncated
-        midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
-            such that each bond half can be coloured separately
-        ax: matplotlib Axes instance
-        aromatic: bool, if True, draw a dashed line; if False, draw a solid line
-        """
-        halflines = line.divide_in_two(midpoint)
-        for halfline in halflines:
-            self._plot_line(halfline, ax, color=halfline.atom.draw.colour, aromatic=aromatic)
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of one line of a bond. This line has been pre-truncated
+    #     midpoint: Vector instance, denoting the midpoint on the line. Used to split the line in two before drawing
+    #         such that each bond half can be coloured separately
+    #     ax: matplotlib Axes instance
+    #     aromatic: bool, if True, draw a dashed line; if False, draw a solid line
+    #     """
+    #     halflines = line.divide_in_two(midpoint)
+    #     for halfline in halflines:
+    #         self._plot_line(halfline, ax, color=halfline.atom.draw.colour, aromatic=aromatic)
 
-    def _plot_line(self, line: Line, ax: Axes, color: str = 'black', aromatic: bool = False) -> None:
-        """
-        Plot the line of half of a bond in matplotlib
+    # def _plot_line(self, line: Line, ax: Axes, color: str = 'black', aromatic: bool = False) -> None:
+    #     """
+    #     Plot the line of half of a bond in matplotlib
 
-        Parameters
-        ----------
-        line: Line instance, line denoting the position of half of the line of a bond
-        ax: matplotlib Axes instance, canvas to draw to
-        color: str, colour of the line
-        aromatic: bool, draw dashed line if True, solid line otherwise
+    #     Parameters
+    #     ----------
+    #     line: Line instance, line denoting the position of half of the line of a bond
+    #     ax: matplotlib Axes instance, canvas to draw to
+    #     color: str, colour of the line
+    #     aromatic: bool, draw dashed line if True, solid line otherwise
 
-        Returns
-        ----------
-        svg_line: str, SVG element depicting half of a bond
-        """
-        if not aromatic:
-            ax.plot([line.point_1.x, line.point_2.x],
-                    [line.point_1.y, line.point_2.y], color=color, linewidth=self.options.bond_thickness)
-        else:
-            ax.plot([line.point_1.x, line.point_2.x],
-                    [line.point_1.y, line.point_2.y], color=color, linewidth=self.options.bond_thickness,
-                    linestyle='dashed', dashes=(2, 1))
+    #     Returns
+    #     ----------
+    #     svg_line: str, SVG element depicting half of a bond
+    #     """
+    #     if not aromatic:
+    #         ax.plot([line.point_1.x, line.point_2.x],
+    #                 [line.point_1.y, line.point_2.y], color=color, linewidth=self.options.bond_thickness)
+    #     else:
+    #         ax.plot([line.point_1.x, line.point_2.x],
+    #                 [line.point_1.y, line.point_2.y], color=color, linewidth=self.options.bond_thickness,
+    #                 linestyle='dashed', dashes=(2, 1))
 
     # @staticmethod
     # def get_image_as_array() -> np.ndarray:
@@ -2144,363 +2144,363 @@ class Drawer:
                 else:
                     self._fix_chiral_bond(bond)
 
-    # TODO: Refactor this such that a dictionary of all drawn components is created first
-    def plot_structure(self) -> None:
-        """
-        Plot the positioned atoms and bonds to a matplotlib canvas
-        """
+    # # TODO: Refactor this such that a dictionary of all drawn components is created first
+    # def plot_structure(self) -> None:
+    #     """
+    #     Plot the positioned atoms and bonds to a matplotlib canvas
+    #     """
 
-        # Find the plotting dimensions of the molecule such that the canvas can be scaled to fit the molecule
+    #     # Find the plotting dimensions of the molecule such that the canvas can be scaled to fit the molecule
 
-        min_x = 100000000
-        max_x = -100000000
-        min_y = 100000000
-        max_y = -100000000
+    #     min_x = 100000000
+    #     max_x = -100000000
+    #     min_y = 100000000
+    #     max_y = -100000000
 
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                if atom.draw.position.x < min_x:
-                    min_x = atom.draw.position.x
-                if atom.draw.position.y < min_y:
-                    min_y = atom.draw.position.y
-                if atom.draw.position.x > max_x:
-                    max_x = atom.draw.position.x
-                if atom.draw.position.y > max_y:
-                    max_y = atom.draw.position.y
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             if atom.draw.position.x < min_x:
+    #                 min_x = atom.draw.position.x
+    #             if atom.draw.position.y < min_y:
+    #                 min_y = atom.draw.position.y
+    #             if atom.draw.position.x > max_x:
+    #                 max_x = atom.draw.position.x
+    #             if atom.draw.position.y > max_y:
+    #                 max_y = atom.draw.position.y
 
-        height: float = max_y - min_y
-        width: float = max_x - min_x
+    #     height: float = max_y - min_y
+    #     width: float = max_x - min_x
 
-        fig, ax = plt.subplots(figsize=((width + 2 * self.options.padding) / 50.0,
-                                        (height + 2 * self.options.padding) / 50.0), dpi=100)
+    #     fig, ax = plt.subplots(figsize=((width + 2 * self.options.padding) / 50.0,
+    #                                     (height + 2 * self.options.padding) / 50.0), dpi=100)
 
-        ax.set_aspect('equal', adjustable='box')
-        ax.axis('off')
+    #     ax.set_aspect('equal', adjustable='box')
+    #     ax.axis('off')
 
-        ax.set_xlim([min_x - self.options.padding, max_x + self.options.padding])
-        ax.set_ylim([min_y - self.options.padding, max_y + self.options.padding])
-        plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
+    #     ax.set_xlim([min_x - self.options.padding, max_x + self.options.padding])
+    #     ax.set_ylim([min_y - self.options.padding, max_y + self.options.padding])
+    #     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
 
-        params = {'mathtext.default': 'regular'}
-        plt.rcParams.update(params)
+    #     params = {'mathtext.default': 'regular'}
+    #     plt.rcParams.update(params)
 
-        for ring in self.rings:
-            self.set_ring_center(ring)
+    #     for ring in self.rings:
+    #         self.set_ring_center(ring)
 
-        for bond_nr, bond in self.structure.bonds.items():
-            if bond.atom_1.draw.positioned and bond.atom_2.draw.positioned:
-                line = Line(bond.atom_1.draw.position, bond.atom_2.draw.position, bond.atom_1, bond.atom_2)
-                midpoint = line.get_midpoint()
+    #     for bond_nr, bond in self.structure.bonds.items():
+    #         if bond.atom_1.draw.positioned and bond.atom_2.draw.positioned:
+    #             line = Line(bond.atom_1.draw.position, bond.atom_2.draw.position, bond.atom_1, bond.atom_2)
+    #             midpoint = line.get_midpoint()
 
-                if bond.type == 'single':
-                    if bond in self.chiral_bonds:
-                        orientation, chiral_center = self.chiral_bond_to_orientation[bond]
-                        self._plot_chiral_bond(orientation, chiral_center, line, ax, midpoint)
-                    else:
-                        self._plot_halflines(line, ax, midpoint)
-                elif bond.type in {'double', 'aromatic'}:
-                    aromatic = False
-                    if bond.type == 'aromatic':
-                        aromatic = True
+    #             if bond.type == 'single':
+    #                 if bond in self.chiral_bonds:
+    #                     orientation, chiral_center = self.chiral_bond_to_orientation[bond]
+    #                     self._plot_chiral_bond(orientation, chiral_center, line, ax, midpoint)
+    #                 else:
+    #                     self._plot_halflines(line, ax, midpoint)
+    #             elif bond.type in {'double', 'aromatic'}:
+    #                 aromatic = False
+    #                 if bond.type == 'aromatic':
+    #                     aromatic = True
                     
-                    if not self._is_terminal(bond.atom_1) and not self._is_terminal(bond.atom_2):
-                        self._plot_halflines(line, ax, midpoint)
+    #                 if not self._is_terminal(bond.atom_1) and not self._is_terminal(bond.atom_2):
+    #                     self._plot_halflines(line, ax, midpoint)
 
-                        common_ring_numbers = self._get_common_rings(bond.atom_1, bond.atom_2)
+    #                     common_ring_numbers = self._get_common_rings(bond.atom_1, bond.atom_2)
 
-                        if common_ring_numbers:
-                            common_rings = []
-                            for ring_nr in common_ring_numbers:
-                                common_rings.append(self.get_ring(ring_nr))
+    #                     if common_ring_numbers:
+    #                         common_rings = []
+    #                         for ring_nr in common_ring_numbers:
+    #                             common_rings.append(self.get_ring(ring_nr))
 
-                            common_rings.sort(key=lambda x: len(x.members))
-                            common_ring = common_rings[0]
-                            ring_centre = common_ring.center
-                            second_line = line.double_line_towards_center(ring_centre, self.options.bond_spacing, self.options.double_bond_length)
-                            second_line_midpoint = second_line.get_midpoint()
-                            self._plot_halflines_double(second_line, ax, second_line_midpoint, aromatic)
+    #                         common_rings.sort(key=lambda x: len(x.members))
+    #                         common_ring = common_rings[0]
+    #                         ring_centre = common_ring.center
+    #                         second_line = line.double_line_towards_center(ring_centre, self.options.bond_spacing, self.options.double_bond_length)
+    #                         second_line_midpoint = second_line.get_midpoint()
+    #                         self._plot_halflines_double(second_line, ax, second_line_midpoint, aromatic)
 
-                        else:
-                            bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
-                            if bond_neighbours:
-                                vectors = [atom.draw.position for atom in bond_neighbours]
-                                gravitational_point = Vector.get_average(vectors)
-                                second_line = line.double_line_towards_center(gravitational_point, self.options.bond_spacing, self.options.double_bond_length)
-                                second_line_midpoint = second_line.get_midpoint()
-                                self._plot_halflines_double(second_line, ax, second_line_midpoint, aromatic)
-                            else:
-                                print("Shouldn't happen!")
-                    else:
-                        if self._is_terminal(bond.atom_1) and self._is_terminal(bond.atom_2):
-                            dummy_1 = Vector(bond.atom_1.draw.position.x + 1, bond.atom_1.draw.position.y + 1)
-                            dummy_2 = Vector(bond.atom_1.draw.position.x - 1, bond.atom_1.draw.position.y - 1)
-                            double_bond_line_1 = line.double_line_towards_center(dummy_1,
-                                                                                 self.options.bond_spacing / 2.0,
-                                                                                 self.options.double_bond_length)
-                            double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
-                            double_bond_line_2 = line.double_line_towards_center(dummy_2,
-                                                                                 self.options.bond_spacing / 2.0,
-                                                                                 self.options.double_bond_length)
-                            double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
+    #                     else:
+    #                         bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
+    #                         if bond_neighbours:
+    #                             vectors = [atom.draw.position for atom in bond_neighbours]
+    #                             gravitational_point = Vector.get_average(vectors)
+    #                             second_line = line.double_line_towards_center(gravitational_point, self.options.bond_spacing, self.options.double_bond_length)
+    #                             second_line_midpoint = second_line.get_midpoint()
+    #                             self._plot_halflines_double(second_line, ax, second_line_midpoint, aromatic)
+    #                         else:
+    #                             print("Shouldn't happen!")
+    #                 else:
+    #                     if self._is_terminal(bond.atom_1) and self._is_terminal(bond.atom_2):
+    #                         dummy_1 = Vector(bond.atom_1.draw.position.x + 1, bond.atom_1.draw.position.y + 1)
+    #                         dummy_2 = Vector(bond.atom_1.draw.position.x - 1, bond.atom_1.draw.position.y - 1)
+    #                         double_bond_line_1 = line.double_line_towards_center(dummy_1,
+    #                                                                              self.options.bond_spacing / 2.0,
+    #                                                                              self.options.double_bond_length)
+    #                         double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
+    #                         double_bond_line_2 = line.double_line_towards_center(dummy_2,
+    #                                                                              self.options.bond_spacing / 2.0,
+    #                                                                              self.options.double_bond_length)
+    #                         double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
 
-                            self._plot_halflines_double(double_bond_line_1, ax, double_bond_line_1_midpoint)
-                            self._plot_halflines_double(double_bond_line_2, ax, double_bond_line_2_midpoint, aromatic)
+    #                         self._plot_halflines_double(double_bond_line_1, ax, double_bond_line_1_midpoint)
+    #                         self._plot_halflines_double(double_bond_line_2, ax, double_bond_line_2_midpoint, aromatic)
 
-                        else:
+    #                     else:
 
-                            if self._is_terminal(bond.atom_1):
-                                terminal_atom = bond.atom_1
-                                branched_atom = bond.atom_2
-                            else:
-                                terminal_atom = bond.atom_2
-                                branched_atom = bond.atom_1
+    #                         if self._is_terminal(bond.atom_1):
+    #                             terminal_atom = bond.atom_1
+    #                             branched_atom = bond.atom_2
+    #                         else:
+    #                             terminal_atom = bond.atom_2
+    #                             branched_atom = bond.atom_1
 
-                            if len(branched_atom.drawn_neighbours) >= 3:
-                                closest_two = self.get_sorted_distances_from_list(terminal_atom, branched_atom.drawn_neighbours)
-                                closest_atom_1 = closest_two[0][1]
-                                closest_atom_2 = closest_two[1][1]
+    #                         if len(branched_atom.drawn_neighbours) >= 3:
+    #                             closest_two = self.get_sorted_distances_from_list(terminal_atom, branched_atom.drawn_neighbours)
+    #                             closest_atom_1 = closest_two[0][1]
+    #                             closest_atom_2 = closest_two[1][1]
 
-                                line = Line(terminal_atom.draw.position, branched_atom.draw.position, terminal_atom, branched_atom)
+    #                             line = Line(terminal_atom.draw.position, branched_atom.draw.position, terminal_atom, branched_atom)
 
-                                double_bond_line_1, double_bond_line_2 = line.get_perpendicular_lines(self.options.bond_spacing / 2.0)
-                                terminal_atom_pos_1 = double_bond_line_1.get_atom_coords(terminal_atom)
-                                terminal_atom_pos_2 = double_bond_line_2.get_atom_coords(terminal_atom)
+    #                             double_bond_line_1, double_bond_line_2 = line.get_perpendicular_lines(self.options.bond_spacing / 2.0)
+    #                             terminal_atom_pos_1 = double_bond_line_1.get_atom_coords(terminal_atom)
+    #                             terminal_atom_pos_2 = double_bond_line_2.get_atom_coords(terminal_atom)
 
-                                closest_atom_to_pos_1 = terminal_atom_pos_1.get_closest_atom(closest_atom_1, closest_atom_2)
-                                closest_atom_to_pos_2 = terminal_atom_pos_2.get_closest_atom(closest_atom_1, closest_atom_2)
+    #                             closest_atom_to_pos_1 = terminal_atom_pos_1.get_closest_atom(closest_atom_1, closest_atom_2)
+    #                             closest_atom_to_pos_2 = terminal_atom_pos_2.get_closest_atom(closest_atom_1, closest_atom_2)
 
-                                bond_1_line = Line(branched_atom.draw.position, closest_atom_to_pos_1.draw.position, branched_atom, closest_atom_to_pos_1)
-                                bond_2_line = Line(branched_atom.draw.position, closest_atom_to_pos_2.draw.position, branched_atom, closest_atom_to_pos_2)
+    #                             bond_1_line = Line(branched_atom.draw.position, closest_atom_to_pos_1.draw.position, branched_atom, closest_atom_to_pos_1)
+    #                             bond_2_line = Line(branched_atom.draw.position, closest_atom_to_pos_2.draw.position, branched_atom, closest_atom_to_pos_2)
 
-                                double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
-                                double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
+    #                             double_bond_line_1_midpoint = double_bond_line_1.get_midpoint()
+    #                             double_bond_line_2_midpoint = double_bond_line_2.get_midpoint()
 
-                                intersection_1 = double_bond_line_1.find_intersection(bond_1_line)
-                                intersection_2 = double_bond_line_2.find_intersection(bond_2_line)
+    #                             intersection_1 = double_bond_line_1.find_intersection(bond_1_line)
+    #                             intersection_2 = double_bond_line_2.find_intersection(bond_2_line)
 
-                                if terminal_atom.draw.position.x > branched_atom.draw.position.x:
-                                    # check for parallel lines
-                                    if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
-                                        double_bond_line_1.point_1 = intersection_1
-                                    if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
-                                        double_bond_line_2.point_1 = intersection_2
+    #                             if terminal_atom.draw.position.x > branched_atom.draw.position.x:
+    #                                 # check for parallel lines
+    #                                 if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
+    #                                     double_bond_line_1.point_1 = intersection_1
+    #                                 if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
+    #                                     double_bond_line_2.point_1 = intersection_2
 
-                                else:
-                                    # check for parallel lines
-                                    if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
-                                        double_bond_line_1.point_2 = intersection_1
-                                    if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
-                                        double_bond_line_2.point_2 = intersection_2
+    #                             else:
+    #                                 # check for parallel lines
+    #                                 if intersection_1 and intersection_1.x < 100000 and intersection_1.y < 100000:
+    #                                     double_bond_line_1.point_2 = intersection_1
+    #                                 if intersection_2 and intersection_2.x < 100000 and intersection_2.y < 100000:
+    #                                     double_bond_line_2.point_2 = intersection_2
 
-                                self._plot_halflines(double_bond_line_1, ax, double_bond_line_1_midpoint)
-                                self._plot_halflines(double_bond_line_2, ax, double_bond_line_2_midpoint, aromatic)
+    #                             self._plot_halflines(double_bond_line_1, ax, double_bond_line_1_midpoint)
+    #                             self._plot_halflines(double_bond_line_2, ax, double_bond_line_2_midpoint, aromatic)
 
-                            else:
-                                self._plot_halflines(line, ax, midpoint)
+    #                         else:
+    #                             self._plot_halflines(line, ax, midpoint)
 
-                                bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
-                                if bond_neighbours:
-                                    vectors = [atom.draw.position for atom in bond_neighbours]
-                                    gravitational_point = Vector.get_average(vectors)
-                                    second_line = line.get_parallel_line(gravitational_point,
-                                                                         self.options.bond_spacing)
-                                    second_line_midpoint = second_line.get_midpoint()
-                                    self._plot_halflines(second_line, ax, second_line_midpoint, aromatic)
-                                else:
-                                    print("Shouldn't happen!")
+    #                             bond_neighbours = bond.atom_1.drawn_neighbours + bond.atom_2.drawn_neighbours
+    #                             if bond_neighbours:
+    #                                 vectors = [atom.draw.position for atom in bond_neighbours]
+    #                                 gravitational_point = Vector.get_average(vectors)
+    #                                 second_line = line.get_parallel_line(gravitational_point,
+    #                                                                      self.options.bond_spacing)
+    #                                 second_line_midpoint = second_line.get_midpoint()
+    #                                 self._plot_halflines(second_line, ax, second_line_midpoint, aromatic)
+    #                             else:
+    #                                 print("Shouldn't happen!")
 
-                elif bond.type == 'triple':
-                    self._plot_halflines(line, ax, midpoint)
-                    line_1, line_2 = line.get_parallel_lines(self.options.bond_spacing)
-                    line_1_midpoint = line_1.get_midpoint()
-                    line_2_midpoint = line_2.get_midpoint()
-                    self._plot_halflines(line_1, ax, line_1_midpoint)
-                    self._plot_halflines(line_2, ax, line_2_midpoint)
+    #             elif bond.type == 'triple':
+    #                 self._plot_halflines(line, ax, midpoint)
+    #                 line_1, line_2 = line.get_parallel_lines(self.options.bond_spacing)
+    #                 line_1_midpoint = line_1.get_midpoint()
+    #                 line_2_midpoint = line_2.get_midpoint()
+    #                 self._plot_halflines(line_1, ax, line_1_midpoint)
+    #                 self._plot_halflines(line_2, ax, line_2_midpoint)
 
-        for atom in self.structure.graph:
-            if atom.draw.positioned:
-                text_h = ''
-                text_h_pos = None
-                if atom.type != 'C' or atom.draw.draw_explicit:
-                    if atom.type == 'C':
-                        text = '.'
-                    else:
-                        text = self.set_r_group_indices_subscript(atom.type)
-                else:
-                    text = ''
+    #     for atom in self.structure.graph:
+    #         if atom.draw.positioned:
+    #             text_h = ''
+    #             text_h_pos = None
+    #             if atom.type != 'C' or atom.draw.draw_explicit:
+    #                 if atom.type == 'C':
+    #                     text = '.'
+    #                 else:
+    #                     text = self.set_r_group_indices_subscript(atom.type)
+    #             else:
+    #                 text = ''
 
-                horizontal_alignment = 'center'
+    #             horizontal_alignment = 'center'
 
-                orientation = self._get_hydrogen_text_orientation(atom)
-                if orientation == 'H_above_atom':
-                    text_h_pos = Vector(atom.draw.position.x, atom.draw.position.y + 6)
-                if orientation == 'H_below_atom':
-                    text_h_pos = Vector(atom.draw.position.x, atom.draw.position.y - 6)
+    #             orientation = self._get_hydrogen_text_orientation(atom)
+    #             if orientation == 'H_above_atom':
+    #                 text_h_pos = Vector(atom.draw.position.x, atom.draw.position.y + 6)
+    #             if orientation == 'H_below_atom':
+    #                 text_h_pos = Vector(atom.draw.position.x, atom.draw.position.y - 6)
 
-                atom_draw_position = Vector(atom.draw.position.x, atom.draw.position.y)
-                if text == '.':
-                    atom_draw_position.y += 2
+    #             atom_draw_position = Vector(atom.draw.position.x, atom.draw.position.y)
+    #             if text == '.':
+    #                 atom_draw_position.y += 2
 
-                if not atom.charge and (atom.type != 'C' or atom.draw.draw_explicit):
+    #             if not atom.charge and (atom.type != 'C' or atom.draw.draw_explicit):
 
-                    if atom.draw.has_hydrogen:
-                        hydrogen_count = 0
-                        for neighbour in atom.neighbours:
-                            if neighbour.type == 'H' and not neighbour.draw.is_drawn:
-                                hydrogen_count += 1
+    #                 if atom.draw.has_hydrogen:
+    #                     hydrogen_count = 0
+    #                     for neighbour in atom.neighbours:
+    #                         if neighbour.type == 'H' and not neighbour.draw.is_drawn:
+    #                             hydrogen_count += 1
 
-                        if hydrogen_count and atom.type != 'C':
+    #                     if hydrogen_count and atom.type != 'C':
 
-                            if hydrogen_count > 1:
-                                if orientation == 'H_before_atom':
-                                    text = r'$H_{hydrogens}{atom_type}$'.format(hydrogens=hydrogen_count,
-                                                                                atom_type=atom.type)
-                                    horizontal_alignment = 'right'
-                                    atom_draw_position.x += 3
-                                elif orientation == 'H_below_atom' or orientation == 'H_above_atom':
-                                    text = atom.type
-                                    text_h = r'$H_{hydrogens}$'.format(hydrogens=hydrogen_count)
+    #                         if hydrogen_count > 1:
+    #                             if orientation == 'H_before_atom':
+    #                                 text = r'$H_{hydrogens}{atom_type}$'.format(hydrogens=hydrogen_count,
+    #                                                                             atom_type=atom.type)
+    #                                 horizontal_alignment = 'right'
+    #                                 atom_draw_position.x += 3
+    #                             elif orientation == 'H_below_atom' or orientation == 'H_above_atom':
+    #                                 text = atom.type
+    #                                 text_h = r'$H_{hydrogens}$'.format(hydrogens=hydrogen_count)
 
-                                else:
-                                    text = r'${atom_type}H_{hydrogens}$'.format(hydrogens=hydrogen_count,
-                                                                                atom_type=atom.type)
-                                    horizontal_alignment = 'left'
-                                    atom_draw_position.x -= 3
-                            elif hydrogen_count == 1:
-                                if orientation == 'H_before_atom':
-                                    text = f'H{atom.type}'
-                                    horizontal_alignment = 'right'
-                                    atom_draw_position.x += 3
-                                elif orientation == 'H_below_atom' or orientation == 'H_above_atom':
-                                    text = atom.type
-                                    text_h = 'H'
-                                else:
-                                    text = f'{atom.type}H'
-                                    horizontal_alignment = 'left'
-                                    atom_draw_position.x -= 3
+    #                             else:
+    #                                 text = r'${atom_type}H_{hydrogens}$'.format(hydrogens=hydrogen_count,
+    #                                                                             atom_type=atom.type)
+    #                                 horizontal_alignment = 'left'
+    #                                 atom_draw_position.x -= 3
+    #                         elif hydrogen_count == 1:
+    #                             if orientation == 'H_before_atom':
+    #                                 text = f'H{atom.type}'
+    #                                 horizontal_alignment = 'right'
+    #                                 atom_draw_position.x += 3
+    #                             elif orientation == 'H_below_atom' or orientation == 'H_above_atom':
+    #                                 text = atom.type
+    #                                 text_h = 'H'
+    #                             else:
+    #                                 text = f'{atom.type}H'
+    #                                 horizontal_alignment = 'left'
+    #                                 atom_draw_position.x -= 3
 
-                elif atom.charge:
-                    if atom.charge > 0:
-                        charge_symbol = '+'
-                    else:
-                        charge_symbol = '-'
+    #             elif atom.charge:
+    #                 if atom.charge > 0:
+    #                     charge_symbol = '+'
+    #                 else:
+    #                     charge_symbol = '-'
 
-                    hydrogen_count = 0
-                    for neighbour in atom.neighbours:
-                        if neighbour.type == 'H' and not neighbour.draw.is_drawn:
-                            hydrogen_count += 1
+    #                 hydrogen_count = 0
+    #                 for neighbour in atom.neighbours:
+    #                     if neighbour.type == 'H' and not neighbour.draw.is_drawn:
+    #                         hydrogen_count += 1
 
-                    if not hydrogen_count:
+    #                 if not hydrogen_count:
 
-                        if abs(atom.charge) > 1:
-                            charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                            text = '$' + atom.type + '^{' + charge_repr + '}$'
+    #                     if abs(atom.charge) > 1:
+    #                         charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                         text = '$' + atom.type + '^{' + charge_repr + '}$'
 
-                            # text = r'${atom_type}^{charge}{charge_symbol}$'.format(charge=atom.charge,
-                            #                                                        atom_type=atom.type,
-                            #                                                        charge_symbol=charge_symbol)
-                        elif abs(atom.charge) == 1:
-                            text = r'${atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
-                                                                           charge_symbol=charge_symbol)
+    #                         # text = r'${atom_type}^{charge}{charge_symbol}$'.format(charge=atom.charge,
+    #                         #                                                        atom_type=atom.type,
+    #                         #                                                        charge_symbol=charge_symbol)
+    #                     elif abs(atom.charge) == 1:
+    #                         text = r'${atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
+    #                                                                        charge_symbol=charge_symbol)
 
-                        horizontal_alignment = 'left'
-                        atom_draw_position.x -= 3
-                    else:
-                    # elif atom.type != 'C' or atom.draw.draw_explicit:
+    #                     horizontal_alignment = 'left'
+    #                     atom_draw_position.x -= 3
+    #                 else:
+    #                 # elif atom.type != 'C' or atom.draw.draw_explicit:
 
-                        if hydrogen_count > 1:
-                            if orientation == 'H_before_atom':
-                                if abs(atom.charge) > 1:
-                                    charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                                    text = '$H_' + str(hydrogen_count) + atom.type + '^{' + charge_repr + '}$'
-                                    # text = r'$H_{hydrogens}{atom_type}^{charge}{charge_symbol}$'.format(hydrogens=hydrogen_count,
-                                    #                                                                     atom_type=atom.type,
-                                    #                                                                     charge=abs(atom.charge),
-                                    #                                                                     charge_symbol=charge_symbol)
-                                elif abs(atom.charge) == 1:
-                                    text = r'$H_{hydrogens}{atom_type}^{charge_symbol}$'.format(hydrogens=hydrogen_count,
-                                                                                                atom_type=atom.type,
-                                                                                                charge_symbol=charge_symbol)
+    #                     if hydrogen_count > 1:
+    #                         if orientation == 'H_before_atom':
+    #                             if abs(atom.charge) > 1:
+    #                                 charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                                 text = '$H_' + str(hydrogen_count) + atom.type + '^{' + charge_repr + '}$'
+    #                                 # text = r'$H_{hydrogens}{atom_type}^{charge}{charge_symbol}$'.format(hydrogens=hydrogen_count,
+    #                                 #                                                                     atom_type=atom.type,
+    #                                 #                                                                     charge=abs(atom.charge),
+    #                                 #                                                                     charge_symbol=charge_symbol)
+    #                             elif abs(atom.charge) == 1:
+    #                                 text = r'$H_{hydrogens}{atom_type}^{charge_symbol}$'.format(hydrogens=hydrogen_count,
+    #                                                                                             atom_type=atom.type,
+    #                                                                                             charge_symbol=charge_symbol)
 
-                                horizontal_alignment = 'right'
-                                atom_draw_position.x += 3
-                            elif orientation == 'H_above_atom' or orientation == 'H_below_atom':
-                                text_h = r'$H_{hydrogens}$'.format(hydrogens=hydrogen_count)
-                                if abs(atom.charge) > 1:
-                                    charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                                    text = '$' + atom.type + '^{' + charge_repr + '}$'
-                                    # text = r'${atom_type}^{charge}{charge_symbol}$'.format(atom_type=atom.type,
-                                    #                                                        charge=abs(atom.charge),
-                                    #                                                        charge_symbol=charge_symbol)
-                                elif abs(atom.charge) == 1:
-                                    text = r'${atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
-                                                                                   charge_symbol=charge_symbol)
-                            else:
-                                if abs(atom.charge) > 1:
-                                    charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                                    text = '$' + atom.type + 'H_' + str(hydrogen_count) + '^{' + charge_repr + '}$'
+    #                             horizontal_alignment = 'right'
+    #                             atom_draw_position.x += 3
+    #                         elif orientation == 'H_above_atom' or orientation == 'H_below_atom':
+    #                             text_h = r'$H_{hydrogens}$'.format(hydrogens=hydrogen_count)
+    #                             if abs(atom.charge) > 1:
+    #                                 charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                                 text = '$' + atom.type + '^{' + charge_repr + '}$'
+    #                                 # text = r'${atom_type}^{charge}{charge_symbol}$'.format(atom_type=atom.type,
+    #                                 #                                                        charge=abs(atom.charge),
+    #                                 #                                                        charge_symbol=charge_symbol)
+    #                             elif abs(atom.charge) == 1:
+    #                                 text = r'${atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
+    #                                                                                charge_symbol=charge_symbol)
+    #                         else:
+    #                             if abs(atom.charge) > 1:
+    #                                 charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                                 text = '$' + atom.type + 'H_' + str(hydrogen_count) + '^{' + charge_repr + '}$'
 
-                                    # text = r'${atom_type}H_{hydrogens}^{charge}{charge_symbol}$'.format(hydrogens=hydrogen_count,
-                                    #                                                                     atom_type=atom.type,
-                                    #                                                                     charge=abs(atom.charge),
-                                    #                                                                     charge_symbol=charge_symbol)
-                                elif abs(atom.charge) == 1:
-                                    text = r'${atom_type}H_{hydrogens}^{charge_symbol}$'.format(hydrogens=hydrogen_count,
-                                                                                                atom_type=atom.type,
-                                                                                                charge_symbol=charge_symbol)
+    #                                 # text = r'${atom_type}H_{hydrogens}^{charge}{charge_symbol}$'.format(hydrogens=hydrogen_count,
+    #                                 #                                                                     atom_type=atom.type,
+    #                                 #                                                                     charge=abs(atom.charge),
+    #                                 #                                                                     charge_symbol=charge_symbol)
+    #                             elif abs(atom.charge) == 1:
+    #                                 text = r'${atom_type}H_{hydrogens}^{charge_symbol}$'.format(hydrogens=hydrogen_count,
+    #                                                                                             atom_type=atom.type,
+    #                                                                                             charge_symbol=charge_symbol)
 
-                                horizontal_alignment = 'left'
-                                atom_draw_position.x -= 3
-                        elif hydrogen_count == 1:
-                            if orientation == 'H_before_atom':
-                                if abs(atom.charge) > 1:
-                                    charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                                    text = '$H' + atom.type + '^{' + charge_repr + '}$'
+    #                             horizontal_alignment = 'left'
+    #                             atom_draw_position.x -= 3
+    #                     elif hydrogen_count == 1:
+    #                         if orientation == 'H_before_atom':
+    #                             if abs(atom.charge) > 1:
+    #                                 charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                                 text = '$H' + atom.type + '^{' + charge_repr + '}$'
 
-                                elif abs(atom.charge) == 1:
-                                    text = r'$H{atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
-                                                                                    charge_symbol=charge_symbol)
-                                horizontal_alignment = 'right'
-                                atom_draw_position.x += 3
-                            elif orientation == 'H_above_atom' or orientation == 'H_below_atom':
-                                text_h = 'H'
-                                if abs(atom.charge) > 1:
-                                    charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                                    text = '$' + atom.type + '^{' + charge_repr + '}$'
+    #                             elif abs(atom.charge) == 1:
+    #                                 text = r'$H{atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
+    #                                                                                 charge_symbol=charge_symbol)
+    #                             horizontal_alignment = 'right'
+    #                             atom_draw_position.x += 3
+    #                         elif orientation == 'H_above_atom' or orientation == 'H_below_atom':
+    #                             text_h = 'H'
+    #                             if abs(atom.charge) > 1:
+    #                                 charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                                 text = '$' + atom.type + '^{' + charge_repr + '}$'
 
-                                    # text = r'${atom_type}^{charge}{charge_symbol}$'.format(atom_type=atom.type,
-                                    #                                                        charge=abs(atom.charge),
-                                    #                                                        charge_symbol=charge_symbol)
-                                elif abs(atom.charge) == 1:
-                                    text = r'${atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
-                                                                                   charge_symbol=charge_symbol)
+    #                                 # text = r'${atom_type}^{charge}{charge_symbol}$'.format(atom_type=atom.type,
+    #                                 #                                                        charge=abs(atom.charge),
+    #                                 #                                                        charge_symbol=charge_symbol)
+    #                             elif abs(atom.charge) == 1:
+    #                                 text = r'${atom_type}^{charge_symbol}$'.format(atom_type=atom.type,
+    #                                                                                charge_symbol=charge_symbol)
 
-                            else:
-                                if abs(atom.charge) > 1:
-                                    charge_repr = f"{abs(atom.charge)}{charge_symbol}"
-                                    text = '$' + atom.type + 'H^{' + charge_repr + '}$'
-                                    # text = r'${atom_type}H^{charge}{charge_symbol}$'.format(atom_type=atom.type,
-                                    #                                                         charge=abs(atom.charge),
-                                    #                                                         charge_symbol=charge_symbol)
+    #                         else:
+    #                             if abs(atom.charge) > 1:
+    #                                 charge_repr = f"{abs(atom.charge)}{charge_symbol}"
+    #                                 text = '$' + atom.type + 'H^{' + charge_repr + '}$'
+    #                                 # text = r'${atom_type}H^{charge}{charge_symbol}$'.format(atom_type=atom.type,
+    #                                 #                                                         charge=abs(atom.charge),
+    #                                 #                                                         charge_symbol=charge_symbol)
 
-                                elif abs(atom.charge) == 1:
-                                    text = r'${atom_type}H^{charge_symbol}$'.format(atom_type=atom.type,
-                                                                                    charge_symbol=charge_symbol)
-                                horizontal_alignment = 'left'
-                                atom_draw_position.x -= 3
+    #                             elif abs(atom.charge) == 1:
+    #                                 text = r'${atom_type}H^{charge_symbol}$'.format(atom_type=atom.type,
+    #                                                                                 charge_symbol=charge_symbol)
+    #                             horizontal_alignment = 'left'
+    #                             atom_draw_position.x -= 3
 
-                if text:
-                    plt.text(atom_draw_position.x, atom_draw_position.y,
-                             text,
-                             horizontalalignment=horizontal_alignment,
-                             verticalalignment='center',
-                             color=atom.draw.colour)
-                if text_h:
-                    plt.text(text_h_pos.x, text_h_pos.y,
-                             text_h,
-                             horizontalalignment='center',
-                             verticalalignment='center',
-                             color=atom.draw.colour)
+    #             if text:
+    #                 plt.text(atom_draw_position.x, atom_draw_position.y,
+    #                          text,
+    #                          horizontalalignment=horizontal_alignment,
+    #                          verticalalignment='center',
+    #                          color=atom.draw.colour)
+    #             if text_h:
+    #                 plt.text(text_h_pos.x, text_h_pos.y,
+    #                          text_h,
+    #                          horizontalalignment='center',
+    #                          verticalalignment='center',
+    #                          color=atom.draw.colour)
 
     # TODO: make this work with direct SVG writing
     @staticmethod
@@ -3904,21 +3904,16 @@ class Drawer:
         """
         hidden: List[Atom] = []
         exposed: List[Atom] = []
-
         self.structure.refresh_structure()
-
         for atom in self.structure.graph:
             if atom.type != 'H':
                 continue
-
             elif atom.charge != 0:
                 continue
-
             neighbour = atom.neighbours[0]
             neighbour.draw.has_hydrogen = True
             atom.draw.is_drawn = False
             hidden.append(atom)
-
             if len(neighbour.draw.rings) < 2 and neighbour.draw.bridged_ring is None and \
                     neighbour.draw.bridged_ring is not None and len(neighbour.draw.original_rings) < 2:
 
@@ -3927,19 +3922,66 @@ class Drawer:
                 hidden.append(atom)
             else:
                 exposed.append(atom)
-
         for atom in self.structure.graph:
             atom.set_drawn_neighbours()
             if atom.type == 'O':
                 pass
-
         self.drawn_bonds = []
-
         for bond_nr, bond in self.structure.bonds.items():
             if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
                 self.drawn_bonds.append(bond)
-
         self.drawn_atoms = self.structure.get_drawn_atoms()
+
+
+    # def hide_hydrogens(self) -> None:
+    #     hidden: List[Atom] = []
+    #     exposed: List[Atom] = []
+    #     self.structure.refresh_structure()
+    #     for atom in self.structure.graph:
+    #         if atom.type != 'H':
+    #             continue
+    #         elif atom.charge != 0:
+    #             continue
+    #         # Получаем соседний атом
+    #         neighbour = atom.neighbours[0]
+    #         # Устанавливаем флаг, что у соседного атома есть водород
+    #         neighbour.draw.has_hydrogen = True
+    #         # Проверяем, должны ли мы скрыть атом водорода
+    #         if self.should_hide_hydrogen(atom, neighbour):
+    #             atom.draw.is_drawn = False
+    #             hidden.append(atom)
+    #         else:
+    #             exposed.append(atom)
+    #     # Обновляем список атомов, которые должны быть нарисованы
+    #     for atom in self.structure.graph:
+    #         atom.set_drawn_neighbours()
+    #     # Обновляем список связей, которые должны быть нарисованы
+    #     self.drawn_bonds = []
+    #     for bond_nr, bond in self.structure.bonds.items():
+    #         if bond.atom_1.draw.is_drawn and bond.atom_2.draw.is_drawn:
+    #             self.drawn_bonds.append(bond)
+    #     self.drawn_atoms = self.structure.get_drawn_atoms()
+
+    # def should_hide_hydrogen(self, hydrogen_atom: Atom, neighbour_atom: Atom) -> bool:
+    #     if self.options.draw_hydrogens:
+    #         return False
+    #     # Проверяем, является ли соседний атом частью кольца
+    #     if neighbour_atom.draw.rings:
+    #         # Если соседний атом является частью кольца, не скрываем атом водорода
+    #         # Добавляем дополнительную проверку, чтобы убедиться, что атом водорода не является частью кольца
+    #         if not hydrogen_atom.draw.rings:
+    #             return False
+    #     # Проверяем, является ли соседний атом частью двойной связи
+    #     if neighbour_atom.draw.bridged_ring:
+    #         # Если соседний атом является частью двойной связи, не скрываем атом водорода
+    #         # Добавляем дополнительную проверку, чтобы убедиться, что атом водорода не является частью двойной связи
+    #         if not hydrogen_atom.draw.bridged_ring:
+    #             return False
+    #     # Если атом водорода является частью молекулы, которая должна быть отображена, не скрываем его
+    #     if hydrogen_atom.draw.is_drawn:
+    #         return False
+    #     # Если ни одно из вышеуказанных условий не выполняется, скрываем атом водорода
+    #     return True
 
     def get_bridged_rings(self) -> List[Ring]:
         """
