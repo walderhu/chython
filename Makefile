@@ -19,10 +19,9 @@ gcov:
 	python3 -m coverage run -m pytest $(TEST_FILE)
 	python3 -m coverage report
 	python3 -m coverage html
-#	open htmlcov/index.html
 
 clean: 
-	rm -rf __pycache__ .pytest_cache htmlcov .coverage
+	rm -rf __pycache__ .pytest_cache htmlcov .coverage errors.txt
 
 clang:
 	@autopep8 --in-place --aggressive --aggressive $(FILE)

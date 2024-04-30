@@ -61,7 +61,6 @@ class AromaticSystem:
         for electron in self.electrons:
             if electron.atom == atom:
                 contributed_electrons.append(electron)
-
         return contributed_electrons
 
     def set_electrons(self):

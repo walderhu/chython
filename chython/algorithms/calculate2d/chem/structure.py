@@ -1,4 +1,4 @@
-from pprint import pprint
+# from pprint import pprint
 import sys
 # from typing import Set, Generator
 
@@ -1485,48 +1485,35 @@ class Structure:
 
     def find_pi_subgraph(self, prune=True):
         pi_subgraph = {}
-
         for bond in self.bonds.values():
             if bond.type == 'aromatic':
-
                 # prune the subgraph as kekulisation can only occur in atoms
                 # that have an unpaired electron
-
                 unpaired_electrons_1 = 0
                 unpaired_electrons_2 = 0
-
-                if len(bond.aromatic_system.get_contributed_electrons(bond.atom_1)) == 1:
-                    unpaired_electrons_1 += 1
-
-                if len(bond.aromatic_system.get_contributed_electrons(bond.atom_2)) == 1:
-                    unpaired_electrons_2 += 1
-
+                if bond.aromatic_system is not None:
+                    if len(bond.aromatic_system.get_contributed_electrons(bond.atom_1)) == 1:
+                        unpaired_electrons_1 += 1
+                    if len(bond.aromatic_system.get_contributed_electrons(bond.atom_2)) == 1:
+                        unpaired_electrons_2 += 1
                 if unpaired_electrons_1 and unpaired_electrons_2:
-
                     if bond.atom_1 not in pi_subgraph:
                         pi_subgraph[bond.atom_1] = []
                     if bond.atom_2 not in pi_subgraph:
                         pi_subgraph[bond.atom_2] = []
-
                     pi_subgraph[bond.atom_1].append(bond.atom_2)
                     pi_subgraph[bond.atom_2].append(bond.atom_1)
-
                 elif not prune:
-
                     if bond.atom_1 not in pi_subgraph:
                         pi_subgraph[bond.atom_1] = []
                     if bond.atom_2 not in pi_subgraph:
                         pi_subgraph[bond.atom_2] = []
-
                     pi_subgraph[bond.atom_1].append(bond.atom_2)
                     pi_subgraph[bond.atom_2].append(bond.atom_1)
-
         return pi_subgraph
 
     def kekulise(self):
-
         kekule_structure = self.deepcopy()
-
         pruned = kekule_structure.find_pi_subgraph(prune=True)
         unpruned = kekule_structure.find_pi_subgraph(prune=False)
 
@@ -1564,48 +1551,36 @@ class Structure:
             aromatic_system.relocalise_electrons()
 
         for pair in double_bond_pairs:
-
             new_atom_1 = kekule_structure.atoms[pair[0].nr]
             new_atom_2 = kekule_structure.atoms[pair[1].nr]
-            
             bond = kekule_structure.bond_lookup[new_atom_1][new_atom_2]
             bond.type = 'double'
             bond.aromatic = False
-            
             bond.atom_1.aromatic = False
             bond.atom_2.aromatic = False
-
             bond.set_bond_summary()
-            
             orbitals_1 = new_atom_1._get_orbitals('p')
             orbitals_2 = new_atom_2._get_orbitals('p')
             
             if orbitals_1 and orbitals_2:
                 orbital_1 = orbitals_1[0]
                 orbital_2 = orbitals_2[0]
-                
                 if not len(orbital_1.electrons) == 1 or not len(orbital_2.electrons) == 1:
                     raise KekulisationError(bond.aromatic_system.__repr__())
-
                 orbital_1.add_electron(orbital_2.electrons[0])
                 orbital_2.add_electron(orbital_1.electrons[0])
-
                 orbital_1.set_bond(bond, 'pi')
                 orbital_2.set_bond(bond, 'pi')
-
                 bond.electrons.append(orbital_1.electrons[0])
                 bond.electrons.append(orbital_2.electrons[0])
-
                 bond.set_bond_summary()
                 bond.aromatic_system = None
 
         for pair in single_bond_pairs:
             new_atom_1 = kekule_structure.atoms[pair[0].nr]
             new_atom_2 = kekule_structure.atoms[pair[1].nr]
-
             bond = kekule_structure.bond_lookup[new_atom_1][new_atom_2]
             bond.type = 'single'
-
             bond.aromatic = False
             bond.atom_1.aromatic = False
             bond.atom_2.aromatic = False
@@ -1615,14 +1590,10 @@ class Structure:
             bond.atom_2.furan = False
             bond.atom_1.thiophene = False
             bond.atom_2.thiophene = False
-
             bond.aromatic_system = None
-
             bond.set_bond_summary()
-
         kekule_structure.aromatic_systems = []
         kekule_structure.aromatic_cycles = []
-
         return kekule_structure
 
 

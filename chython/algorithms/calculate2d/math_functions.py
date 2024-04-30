@@ -828,19 +828,19 @@ class Polygon:
         return Polygon.get_apothem(radius, edge_number)
 
 
-if __name__ == "__main__":
-    vector_1 = Vector(16.927447373757524, 38.41235497102897)
-    vector_2 = Vector(28.074619755918448, 48.44931406641183)
-    vector_3 = Vector(82.01933537136128, 44.58050841492202)
-    vector_4 = Vector(82.01933537136128, 44.58050841492202)
+# if __name__ == "__main__":
+#     vector_1 = Vector(16.927447373757524, 38.41235497102897)
+#     vector_2 = Vector(28.074619755918448, 48.44931406641183)
+#     vector_3 = Vector(82.01933537136128, 44.58050841492202)
+#     vector_4 = Vector(82.01933537136128, 44.58050841492202)
 
-    vector_4.mirror_about_line(vector_1, vector_2)
-    labels = ['1', '2', '3', '4']
-    vectors = [vector_1, vector_2, vector_3, vector_4]
-    plt.gca().set_aspect('equal')
-    plt.scatter([vector.x for vector in vectors], [vector.y for vector in vectors], label=labels)
+#     vector_4.mirror_about_line(vector_1, vector_2)
+#     labels = ['1', '2', '3', '4']
+#     vectors = [vector_1, vector_2, vector_3, vector_4]
+#     plt.gca().set_aspect('equal')
+#     plt.scatter([vector.x for vector in vectors], [vector.y for vector in vectors], label=labels)
 
-    plt.show()
+#     plt.show()
 
 
 
