@@ -1537,19 +1537,15 @@ class Structure:
                         single_bond_pair = tuple(sorted([node.atom, neighbour.atom], key=lambda x: x.nr))
                         if single_bond_pair not in single_bond_pairs:
                             single_bond_pairs.add(single_bond_pair)
-
             # heteroatoms containing lone pairs, sp2-hybridised carbons
-
             for atom in aromatic_unmatched:
                 for neighbour in atom.neighbours:
                     if neighbour in atom.aromatic_system.atoms:
                         single_bond_pair = tuple(sorted([atom, neighbour], key=lambda x: x.nr))
                         if single_bond_pair not in single_bond_pairs:
                             single_bond_pairs.add(single_bond_pair)
-
         for aromatic_system in kekule_structure.aromatic_systems:
             aromatic_system.relocalise_electrons()
-
         for pair in double_bond_pairs:
             new_atom_1 = kekule_structure.atoms[pair[0].nr]
             new_atom_2 = kekule_structure.atoms[pair[1].nr]
@@ -1561,7 +1557,6 @@ class Structure:
             bond.set_bond_summary()
             orbitals_1 = new_atom_1._get_orbitals('p')
             orbitals_2 = new_atom_2._get_orbitals('p')
-            
             if orbitals_1 and orbitals_2:
                 orbital_1 = orbitals_1[0]
                 orbital_2 = orbitals_2[0]
@@ -1575,7 +1570,6 @@ class Structure:
                 bond.electrons.append(orbital_2.electrons[0])
                 bond.set_bond_summary()
                 bond.aromatic_system = None
-
         for pair in single_bond_pairs:
             new_atom_1 = kekule_structure.atoms[pair[0].nr]
             new_atom_2 = kekule_structure.atoms[pair[1].nr]

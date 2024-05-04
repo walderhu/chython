@@ -322,7 +322,8 @@ class Drawer:
              draw_multiple instead
         kekulise: bool, if True, kekulise the structure before drawing, False otherwise
         """
-
+        # if structure is None:
+            # raise ValueError("The structure object cannot be None.")
         if options is None:
             self.options: Options = Options()
         else:
@@ -331,7 +332,6 @@ class Drawer:
             self.structure = structure.kekulise()
         else:
             self.structure = structure
-
         self.multiple: bool = multiple
 
         # Used for tracking rings in the structure
