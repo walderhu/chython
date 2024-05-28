@@ -185,3 +185,8 @@ class Shell:
             return True
         else:
             return False
+        
+    def print_shell(self):
+        for orbital in self.orbitals:
+            print(orbital)
+            print(orbital.electrons)
