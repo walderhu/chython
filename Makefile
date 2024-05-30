@@ -13,7 +13,7 @@ install:
 	pip install pytest
 
 test:
-	python3 $(TEST_FILE)
+	python3 testing.py
 
 gcov:
 	python3 -m coverage run -m pytest $(TEST_FILE)
@@ -22,7 +22,7 @@ gcov:
 #	open htmlcov/index.html
 
 clean: 
-	rm -rf __pycache__ .pytest_cache htmlcov .coverage
+	rm -rf __pycache__ .pytest_cache htmlcov .coverage output_files
 
 clang:
 	@autopep8 --in-place --aggressive --aggressive $(FILE)
