@@ -52,7 +52,6 @@ def parse_explicit(component):
                     element.append(i)
                     element.append(i + 1)
                     skip = True
-
             else:
                 try:
                     if informative[i + 1].islower():
@@ -130,7 +129,6 @@ def parse_explicit(component):
     if not element and hydrogen == 0:
         element = 'H'
         hydrogens = 0
-
     return element, chiral, charge, hydrogens
 
 

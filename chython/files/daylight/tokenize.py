@@ -97,6 +97,7 @@ def _tokenize(smiles):
             token = None
             token_type = 0  # mark as atom
         elif token_type == 5:  # grow token with brackets. skip validation
+#!            # тут происходит добавление атома в токен, потому что он заключен в квадратные скобки, но еще не происходит добавление tokens.append(token)
             token.append(s)
         # closure parser
         elif s.isnumeric():  # closures
@@ -371,10 +372,10 @@ def smiles_tokenize(smi):
     tokens = _tokenize(smi)
     out = []
     for token_type, token in tokens:
-        if token_type in (0, 8):  # simple atom
+        if token_type in (0, 8):  # simple atom or atomatic atom
             out.append((token_type, {'element': token, 'isotope': None, 'mapping': 0, 'charge': 0, 'is_radical': False,
                                      'x': 0., 'y': 0., 'z': 0., 'hydrogen': None, 'stereo': None}))
-        elif token_type == 5:
+        elif token_type == 5: # [atom]
             out.append(_atom_parse(token))
         elif token_type == 10:
             raise IncorrectSmiles('SMARTS detected')
