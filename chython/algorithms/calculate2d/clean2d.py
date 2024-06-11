@@ -29,8 +29,8 @@ class Calculate2DMolecule:
             plane[n] = (x - shift_x, shift_y - y)
         bonds = []
         for n, m, _ in self.bonds():
-            xn, yn = plane[n]
-            xm, ym = plane[m]
+            xn, yn = plane[n] #
+            xm, ym = plane[m] #
             bonds.append(((xm - xn) ** 2 + (ym - yn) ** 2) ** 0.5)
         if bonds:
             bond_reduce = sum(bonds) / len(bonds) / 0.825
